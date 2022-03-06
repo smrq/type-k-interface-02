@@ -18,3 +18,15 @@ The design for the PCB was done in KiCad. The PCB is designed according to the s
 * **SW129** [MJTP1117 equivalent reset switch](https://keeb.io/collections/diy-parts/products/reset-pushbutton-switch)
 * **U1** [Elite-C v4](https://keeb.io/products/elite-c-low-profile-version-usb-c-pro-micro-replacement-atmega32u4)
 * **U2** [74HC154 4-to-16 demultiplexer](https://lcsc.com/product-detail/Signal-Switches-Encoders-Decoders-Multiplexers_Texas-Instruments-CD74HC154M96_C2832236.html)
+
+## Case
+
+Prerequisites:
+
+* pyenv ([*nix](https://github.com/pyenv/pyenv) or [Windows](https://github.com/pyenv-win/pyenv-win))
+* [Poetry](https://python-poetry.org/) package manager
+
+Building:
+
+* `poetry install`
+* `poetry run python keyboard_layout.py`

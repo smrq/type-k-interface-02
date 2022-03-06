@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "type_k_interface_02_case"
+version = "0.1.0"
+description = ""
+authors = ["Greg Smith <smrq@smrq.net>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+ezdxf = "^0.17.2"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
