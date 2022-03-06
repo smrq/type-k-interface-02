@@ -1,0 +1,5 @@
+*.sublime-workspace
+pcb/*-backups
+pcb/*.bak
+pcb/gerbers/*
+!pcb/gerbers/*.zip
