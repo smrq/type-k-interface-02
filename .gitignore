@@ -3,3 +3,6 @@ pcb/*-backups
 pcb/*.bak
 pcb/gerbers/*
 !pcb/gerbers/*.zip
+firmware/bin
+firmware/vendor/*
+!firmware/vendor/*.zip
