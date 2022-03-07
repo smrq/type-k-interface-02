@@ -22,7 +22,7 @@ endif
 DOCKER_IMG := lpodkalicki/avr-toolchain
 RUN := docker run --rm -v $(CWD)$(SRCDIR):/build/$(SRCDIR) -v $(CWD)$(BINDIR):/build/$(BINDIR) $(DOCKER_IMG)
 
-SRCS := src/main.c
+SRCS := $(shell $(RUN) find $(SRCDIR) -type f -name '*.c')
 TARGET := unit_02
 
 all: $(BINDIR)/$(TARGET).hex
