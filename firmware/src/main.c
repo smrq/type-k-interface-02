@@ -22,20 +22,66 @@ void setup() {
 }
 
 void loop() {
-	LED_set_colors((u8[]){ 0, 10, 0 }, 3);
-	OLED_test_pattern(0);
+	OLED_clear();
+	OLED_draw_pixel(64, 16, 1);
 	OLED_flip();
-	_delay_ms(250);
+	_delay_ms(100);
 
-	LED_set_colors((u8[]){ 10, 0, 0 }, 3);
-	OLED_test_pattern(1);
+	OLED_draw_filled_circle(64, 16, 1, 1);
 	OLED_flip();
-	_delay_ms(250);
+	_delay_ms(100);
 
-	LED_set_colors((u8[]){ 0, 0, 10 }, 3);
-	OLED_test_pattern(2);
+	OLED_draw_filled_circle(64, 16, 18, 1);
+	OLED_draw_filled_circle(64, 16, 10, 0);
+	OLED_draw_filled_circle(64, 16, 1, 1);
 	OLED_flip();
-	_delay_ms(250);
+	_delay_ms(60);
+
+	OLED_draw_filled_circle(64, 16, 35, 1);
+	OLED_draw_filled_circle(64, 16, 30, 0);
+	OLED_draw_filled_circle(64, 16, 1, 1);
+	OLED_flip();
+	_delay_ms(60);
+
+	OLED_draw_filled_circle(64, 16, 40, 1);
+	OLED_draw_filled_circle(64, 16, 37, 0);
+	OLED_draw_filled_circle(64, 16, 1, 1);
+	OLED_flip();
+	_delay_ms(40);
+
+	OLED_draw_filled_circle(64, 16, 45, 1);
+	OLED_draw_filled_circle(64, 16, 43, 0);
+	OLED_draw_filled_circle(64, 16, 1, 1);
+	OLED_flip();
+	_delay_ms(40);
+
+	OLED_draw_filled_circle(64, 16, 47, 1);
+	OLED_draw_filled_circle(64, 16, 45, 0);
+	OLED_draw_filled_circle(64, 16, 1, 1);
+	OLED_flip();
+	_delay_ms(40);
+
+	OLED_clear();
+	OLED_draw_circle(64, 16, 49, 1);
+	OLED_draw_filled_circle(64, 16, 1, 1);
+	OLED_flip();
+	_delay_ms(40);
+
+	OLED_clear();
+	OLED_draw_circle(64, 16, 50, 1);
+	OLED_draw_filled_circle(64, 16, 1, 1);
+	OLED_flip();
+	_delay_ms(100);
+
+	OLED_clear();
+	OLED_draw_pixel(64, 16, 1);
+	OLED_flip();
+	_delay_ms(100);
+
+	OLED_clear();
+	OLED_flip();
+	_delay_ms(500);
+
 }
 
 int main() {
