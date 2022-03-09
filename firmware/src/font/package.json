@@ -1,0 +1,11 @@
+{
+  "name": "type-k-interface-02-font",
+  "private": true,
+  "dependencies": {
+    "canvas": "^2.9.0"
+  },
+  "scripts": {
+    "start": "node generate.js",
+    "encode": "node kana-to-ascii.js"
+  }
+}

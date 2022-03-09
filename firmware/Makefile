@@ -1,4 +1,5 @@
 SRCDIR=src
+OBJDIR=obj
 BINDIR=bin
 MCU=atmega32u4
 CPU=16000000
@@ -20,9 +21,10 @@ else
 endif
 
 DOCKER_IMG := lpodkalicki/avr-toolchain
-RUN := docker run --rm -v $(CWD)$(SRCDIR):/build/$(SRCDIR) -v $(CWD)$(BINDIR):/build/$(BINDIR) $(DOCKER_IMG)
+RUN := docker run --rm -v $(CWD)$(SRCDIR):/build/$(SRCDIR) -v $(CWD)$(OBJDIR):/build/$(OBJDIR) -v $(CWD)$(BINDIR):/build/$(BINDIR) $(DOCKER_IMG)
 
 SRCS := $(shell $(RUN) find $(SRCDIR) -type f -name '*.c')
+OBJS := $(SRCS:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 TARGET := unit_02
 
 all: $(BINDIR)/$(TARGET).hex
@@ -30,9 +32,17 @@ all: $(BINDIR)/$(TARGET).hex
 .PHONY: all clean flash
 .SECONDARY:
 
+$(SRCDIR)/font/font.c: $(SRCDIR)/font/generate.js
+	cd $(SRCDIR)/font && yarn && yarn start
+
+# $(OBJDIR)/%.o: $(SRCDIR)/%.c
+# 	$(call MKDIRP,$(@D))
+# 	$(RUN) avr-gcc $(CFLAGS) $(OPTFLAGS) $(EXTOPTFLAGS) $(ARCHFLAGS) -c $< -o $@
+
+# $(BINDIR)/$(TARGET).elf: $(OBJS)
 $(BINDIR)/$(TARGET).elf: $(SRCS)
 	$(call MKDIRP,$(@D))
-	$(RUN) avr-gcc $(CFLAGS) $(OPTFLAGS) $(EXTOPTFLAGS) $(ARCHFLAGS) $^ -o $@
+	$(RUN) avr-gcc $(OPTFLAGS) $(EXTOPTFLAGS) $(ARCHFLAGS) $^ -o $@
 	$(RUN) avr-size $@
 
 $(BINDIR)/%.hex: $(BINDIR)/%.elf

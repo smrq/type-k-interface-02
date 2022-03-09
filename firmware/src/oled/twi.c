@@ -1,17 +1,16 @@
-#include "defs.h"
 #include "twi.h"
 
 enum MessageState_t {
-	STATE_IDLE,
-	STATE_TX,
-	STATE_TX_PROGMEM,
-	STATE_FINISHED
+	MessageState_Idle,
+	MessageState_Tx,
+	MessageState_Tx_Progmem,
+	MessageState_Finished
 };
 
 local u8 messageAddress = 0;
 local const u8 *messageTxBuffer;
 local size_t messageTxLength;
-local volatile enum MessageState_t messageState = STATE_IDLE;
+local volatile enum MessageState_t messageState = MessageState_Idle;
 
 void TWI_init() {
 	/*
@@ -37,11 +36,11 @@ local void TWI_continue(bool ack) {
 
 local void TWI_stop() {
 	TWCR = _BV(TWEN) | _BV(TWIE) | _BV(TWINT) | _BV(TWSTO);
-	messageState = STATE_IDLE;
+	messageState = MessageState_Idle;
 }
 
 bool TWI_busy() {
-	return messageState != STATE_IDLE || (TWCR & _BV(TWSTO));
+	return messageState != MessageState_Idle || (TWCR & _BV(TWSTO));
 }
 
 bool TWI_send(u8 address, const u8 *txData, size_t txLength) {
@@ -52,7 +51,7 @@ bool TWI_send(u8 address, const u8 *txData, size_t txLength) {
 	messageAddress = address;
 	messageTxBuffer = txData;
 	messageTxLength = txLength;
-	messageState = STATE_TX;
+	messageState = MessageState_Tx;
 	TWI_start();
 
 	return true;
@@ -66,7 +65,7 @@ bool TWI_send_progmem(u8 address, const u8 *txData, size_t txLength) {
 	messageAddress = address;
 	messageTxBuffer = txData;
 	messageTxLength = txLength;
-	messageState = STATE_TX_PROGMEM;
+	messageState = MessageState_Tx_Progmem;
 	TWI_start();
 
 	return true;
@@ -77,8 +76,8 @@ ISR(TWI_vect) {
 		case TW_START: // 0x08
 		case TW_REP_START: // 0x10
 			switch (messageState) {
-				case STATE_TX:
-				case STATE_TX_PROGMEM:
+				case MessageState_Tx:
+				case MessageState_Tx_Progmem:
 					TWDR = (messageAddress << 1) | TW_WRITE;
 					TWI_continue(true); // SLA+W will be transmitted; ACK or NOT ACK will be received
 					break;
@@ -94,23 +93,23 @@ ISR(TWI_vect) {
 		case TW_MT_SLA_ACK: // 0x18
 		case TW_MT_DATA_ACK: // 0x28
 			switch (messageState) {
-				case STATE_TX:
+				case MessageState_Tx:
 					TWDR = *messageTxBuffer++;
 					if (!--messageTxLength) {
-						messageState = STATE_FINISHED;
+						messageState = MessageState_Finished;
 					}
 					TWI_continue(true); // Data byte will be transmitted and ACK or NOT ACK will be received
 					break;
 
-				case STATE_TX_PROGMEM:
+				case MessageState_Tx_Progmem:
 					TWDR = pgm_read_byte(messageTxBuffer++);
 					if (!--messageTxLength) {
-						messageState = STATE_FINISHED;
+						messageState = MessageState_Finished;
 					}
 					TWI_continue(true); // Data byte will be transmitted and ACK or NOT ACK will be received
 					break;				
 
-				case STATE_FINISHED:
+				case MessageState_Finished:
 					TWI_stop(); // STOP condition will be transmitted and TWSTO Flag will be reset
 					break;
 

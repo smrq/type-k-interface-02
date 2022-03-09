@@ -1,6 +1,6 @@
 #pragma once
 
-#include "defs.h"
+#include "../defs.h"
 
 #define TWI_BLOCKING(CMD) do { CMD; while (TWI_busy()); } while (0)
 
