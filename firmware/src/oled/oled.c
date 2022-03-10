@@ -11,7 +11,7 @@ const PROGMEM u8 initCommand[] = {
 	0xA8, 0x1F, // Set Multiplex Ratio
 	0xDA, 0x02, // Set COM Pins Hardware Configuration
 	0xA0, // Set Segment Re-map = 0
-	0xC8, // Set COM Output Scan Direction
+	0xC0, // Set COM Output Scan Direction
 	0xA6, // Set Normal/Inverse Display = Normal
 	0x2E, // Deactivate Scroll
 	0xD9, 0x02, // Set Pre-charge Period = 2
@@ -96,9 +96,9 @@ void OLED_test_pattern(u8 n) {
 void OLED_draw_pixel(i16 x, i16 y, bool color) {
 	if (x < 0 || x >= OLED_WIDTH || y < 0 || y >= OLED_HEIGHT) return;
 	if (color) {
-		framebuffer[1 + (OLED_WIDTH-1-x) + OLED_WIDTH*(y>>3)] |= (1<<(y % 8));
+		framebuffer[1 + x + OLED_WIDTH*(y>>3)] |= (1<<(y % 8));
 	} else {
-		framebuffer[1 + (OLED_WIDTH-1-x) + OLED_WIDTH*(y>>3)] &= ~(1<<(y % 8));
+		framebuffer[1 + x + OLED_WIDTH*(y>>3)] &= ~(1<<(y % 8));
 	}
 }
 
@@ -249,9 +249,9 @@ i16 OLED_draw_char(i16 x, i16 y, char c, const u16 *font, const u16 *fontOffset,
 
 		while (pattern && yByte < (OLED_HEIGHT >> 3)) {
 			if (color) {
-				framebuffer[1 + (OLED_WIDTH-1-x) + OLED_WIDTH*yByte] |= pattern & 0xFF;
+				framebuffer[1 + x + OLED_WIDTH*yByte] |= pattern & 0xFF;
 			} else {
-				framebuffer[1 + (OLED_WIDTH-1-x) + OLED_WIDTH*yByte] &= ~(pattern & 0xFF);
+				framebuffer[1 + x + OLED_WIDTH*yByte] &= ~(pattern & 0xFF);
 			}
 			pattern = pattern >> 8;
 			++yByte;

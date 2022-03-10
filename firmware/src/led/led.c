@@ -1,11 +1,12 @@
 #include "led.h"
 
+u8 led_buffer[3*LED_COUNT] = { 0 };
+
 void LED_init() {
-	u8 data[3] = { 0 };
-	LED_set_colors(data, sizeof(data));
+	LED_update();
 }
 
-void LED_set_colors(u8 *data, size_t length) {
+local void _LED_set_colors(u8 *data, size_t length) {
 	DISABLE_GLOBAL_INTERRUPTS();
 	u8 hi = PORTD | _BV(4);
 	u8 lo = PORTD & ~_BV(4);
@@ -47,3 +48,14 @@ void LED_set_colors(u8 *data, size_t length) {
 	ENABLE_GLOBAL_INTERRUPTS();
 	_delay_us(280);
 }
+
+void LED_set(u8 n, u8 r, u8 g, u8 b) {
+	led_buffer[3*n] = g;
+	led_buffer[3*n+1] = r;
+	led_buffer[3*n+2] = b;
+}
+
+void LED_update() {
+	_LED_set_colors(led_buffer, sizeof(led_buffer));
+}
+

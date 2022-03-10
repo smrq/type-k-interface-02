@@ -19,7 +19,6 @@ local void _USB_handle_disconnect() {
 }
 
 local void _USB_handle_start_of_frame() {
-	// TODO: This doesn't seem right, idle_timeout_remaining is measured in ms
 	if (USB_idle_timeout_remaining) {
 		USB_idle_timeout_remaining--;
 	}

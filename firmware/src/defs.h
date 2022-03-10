@@ -30,3 +30,5 @@ typedef int32_t i32;
 #define ROW_COUNT 8
 #define COLUMN_COUNT 16
 #define LAYER_COUNT 1
+
+void debug(const char *str);

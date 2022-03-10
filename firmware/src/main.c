@@ -51,13 +51,12 @@ void setup() {
 	PORTF = _BV(0) | _BV(1) | _BV(4) | _BV(5) | _BV(6) | _BV(7);
 	DDRF = 0;
 
+	timer_init();
+	
 	LED_init();
+
 	TWI_init();
 	OLED_init();
-
-	LED_set_colors((u8[]){ 5, 5, 5 }, 3);
-	console_write("TYPE-K Interface 02\n");
-
 	USB_init();
 
 	ENABLE_GLOBAL_INTERRUPTS();
@@ -66,33 +65,9 @@ void setup() {
 u32 loopcount;
 
 void loop() {
-	// keyboard_update();
+	keyboard_update();
 	USB_update();
-
-	char buf[32];
-	snprintf(buf, sizeof(buf), "[%d]\n", loopcount);
-
-	console_write(buf);
-
-	// animation_drop();
-	// _delay_ms(750);
-
-	// const char str1[] = "TYPE-K ";
-	// const char str2[] = "$s?|U'|9"; // "インターフェース"
-	// const char str3[] = " 02";
-	// i16 x = 0;
-	// x = OLED_draw_text(x, -2, str1, font_regular, font_offset_regular, true);
-	// x = OLED_draw_text(x, -2, str2, font_kana, font_offset_kana, true);
-	// x = OLED_draw_text(x, -2, str3, font_regular, font_offset_regular, true);
-	// OLED_draw_horizontal_line(0, 127, 11, true);
-	// OLED_flip();
-	// _delay_ms(2000);
-
-	// OLED_clear();
-	// OLED_flip();
-	// _delay_ms(2000);
-
-	++loopcount;
+	animation_tick();
 }
 
 int main() {
