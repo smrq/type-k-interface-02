@@ -8,5 +8,5 @@ typedef struct {
 	u8 counter1;
 } Keyscanner_ColumnState_t;
 
-void keyscanner_scan();
+void keyscanner_update();
 u8 keyscanner_get_state(u8 column);

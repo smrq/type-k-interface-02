@@ -25,7 +25,7 @@ local void keyscanner_debounce(Keyscanner_ColumnState_t *column, u8 pressed) {
 	column->current ^= counterOverflow;
 }
 
-void keyscanner_scan() {
+void keyscanner_update() {
 	for (u8 column = 0; column < COLUMN_COUNT; ++column) {
 		PORTB = (PORTB & ~(_BV(4) | _BV(5))) | ((column & 1) << 5) | (((column >> 1) & 1) << 4);
 		PORTD = (PORTD & ~(_BV(7))) | (((column >> 3) & 1) << 7);
