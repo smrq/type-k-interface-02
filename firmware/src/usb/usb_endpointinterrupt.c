@@ -298,25 +298,15 @@ local bool _USB_handle_get_endpoint_status(u8 index) {
 
 /* USB HID 1.11 Specification, section 7.2.1 Get_Report Request, p. 51 */
 local bool _USB_handle_get_report(u16 length) {
-	union {
-		USB_BootKeyboardReport_t boot;
-		USB_NkroKeyboardReport_t nkro;
-	} report = { 0 };
+	void *report;
 	u16 reportSize;
-
-	if (USB_using_report_protocol) {
-		USB_populate_nkro_keyboard_report(&report.nkro);
-		reportSize = sizeof(report.nkro);
-	} else {
-		USB_populate_boot_keyboard_report(&report.boot);
-		reportSize = sizeof(report.boot);
-	}
+	USB_get_keyboard_report(&report, &reportSize);
 
 	if (reportSize > length) {
 		reportSize = length;
 	}
 
-	USB_transfer_data(&report, reportSize, false, USB_ENDPOINT_CONTROL_SIZE);
+	USB_transfer_data(report, reportSize, false, USB_ENDPOINT_CONTROL_SIZE);
 
 	if (!USB_wait_for_out_ready()) return false;
 	USB_clear_out();
@@ -334,7 +324,7 @@ local bool _USB_handle_set_report() {
 	if (!USB_wait_for_in_ready()) return false;
 	USB_send_in();
 
-	USB_process_led_report(report);
+	USB_set_led_report(report);
 
 	return true;
 }
@@ -516,6 +506,7 @@ ISR(USB_COM_vect, ISR_BLOCK) {
 	USB_DeviceRequest_t controlRequest;
 	USB_read_from_endpoint(&controlRequest, sizeof(controlRequest));
 	USB_clear_setup();
+
 	_USB_handle_control_request(&controlRequest);
 
 	USB_select_endpoint(USB_ENDPOINT_CONTROL);

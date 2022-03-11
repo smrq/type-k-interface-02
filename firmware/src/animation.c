@@ -145,6 +145,7 @@ local void _draw_status_indicator(i16 x0, i16 y0, i16 x1, i16 y1, const char *te
 }
 
 local enum AnimationResult_t _animation_keyboard_info() {
+	// TODO: Indicator for boot keyboard mode
 	OLED_clear();
 
 	i16 x = 0;
@@ -153,7 +154,7 @@ local enum AnimationResult_t _animation_keyboard_info() {
 	x = OLED_draw_text(x, -3, " 02", font_regular, font_offset_regular, true);
 	OLED_draw_horizontal_line(0, 127, 10, true);
 
-	USB_LedReport_t status = keyboard_get_status();
+	USB_LedReport_t status = USB_get_led_report();
 	_draw_status_indicator(0, 11, 28, 24, "NUM", status & HID_LED_NUM_LOCK);
 	_draw_status_indicator(47, 11, 81, 24, "CAPS", status & HID_LED_CAPS_LOCK);
 	_draw_status_indicator(99, 11, 127, 24, "SCR", status & HID_LED_SCROLL_LOCK);

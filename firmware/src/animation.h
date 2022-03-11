@@ -8,6 +8,7 @@
 #include "led/led.h"
 #include "oled/oled.h"
 #include "usb/usb_defs.h"
+#include "usb/usb_reports.h"
 
 #define ANIMATION_MS_PER_FRAME 16
 

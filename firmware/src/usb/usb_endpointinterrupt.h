@@ -5,3 +5,4 @@
 #include "usb.h"
 #include "usb_descriptors.h"
 #include "usb_hardware.h"
+#include "usb_reports.h"
