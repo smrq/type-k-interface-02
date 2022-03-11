@@ -5,7 +5,6 @@ typedef struct {
 	USB_InterfaceDescriptor_t     interface;
 	HID_Descriptor_t              hid;
 	USB_EndpointDescriptor_t      keyboardInEndpoint;
-	USB_EndpointDescriptor_t      keyboardOutEndpoint;
 } USB_CombinedConfigurationDescriptor_t;
 
 enum StringDescriptorId_t {
@@ -142,17 +141,6 @@ local const PROGMEM USB_CombinedConfigurationDescriptor_t _configurationDescript
 			.descriptorType = USB_DescriptorType_Endpoint
 		},
 		.endpointAddress    = USB_ENDPOINT_KEYBOARD_IN | USB_ENDPOINT_ADDRESS_DIRECTION_IN,
-		.attributes         = USB_ENDPOINT_ATTRIBUTES_INTERRUPT,
-		.maxPacketSize      = USB_ENDPOINT_KEYBOARD_SIZE,
-		.interval           = 5
-	},
-
-	.keyboardOutEndpoint = {
-		.header = {
-			.length         = sizeof(USB_EndpointDescriptor_t),
-			.descriptorType = USB_DescriptorType_Endpoint
-		},
-		.endpointAddress    = USB_ENDPOINT_KEYBOARD_OUT | USB_ENDPOINT_ADDRESS_DIRECTION_OUT,
 		.attributes         = USB_ENDPOINT_ATTRIBUTES_INTERRUPT,
 		.maxPacketSize      = USB_ENDPOINT_KEYBOARD_SIZE,
 		.interval           = 5

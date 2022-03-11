@@ -21,9 +21,19 @@
 #define USB_INTERFACE_COUNT        1
 #define USB_INTERFACE_KEYBOARD     1
 
-#define USB_ENDPOINT_COUNT         2
+/*
+	We don't need to define OUT endpoints for HID devices:
+
+	The Interrupt Out pipe is optional. If a device declares an Interrupt Out endpoint
+	then Output reports are transmitted by the host to the device through the Interrupt
+	Out endpoint. If no Interrupt Out endpoint is declared then Output reports are
+	transmitted to a device through the Control endpoint, using Set_Report(Output)
+	requests.
+
+	- USB HID 1.11 Specification, section 4.4 Interfaces, p. 10
+*/
+#define USB_ENDPOINT_COUNT         1
 #define USB_ENDPOINT_KEYBOARD_IN   1
-#define USB_ENDPOINT_KEYBOARD_OUT  2
 #define USB_ENDPOINT_KEYBOARD_SIZE 32
 
 #define USB_VENDOR_ID              0xF055
