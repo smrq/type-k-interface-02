@@ -1,6 +1,7 @@
 #include "animation.h"
 
 enum AnimationState_t {
+	AnimationState_None,
 	AnimationState_Startup,
 	AnimationState_KeyboardInfo,
 	AnimationState_Debug,
@@ -16,7 +17,7 @@ local u32 _animationLastFrameTime;
 local u16 _animationFrame;
 
 void animation_init() {
-	_animationState = AnimationState_Startup;
+	_animationState = AnimationState_None;
 	_animationFrame = 0;
 	_animationLastFrameTime = timer_get_ms();
 }

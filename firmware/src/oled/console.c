@@ -25,7 +25,3 @@ void console_write(const char *text) {
 	}
 	OLED_flip();
 }
-
-void debug(const char *str) {
-	console_write(str);
-}
