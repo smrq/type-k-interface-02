@@ -313,9 +313,11 @@ enum HID_RequestCode_t {
 #define HID_USAGE_PAGE_GENERIC_DESKTOP 0x01
 #define HID_USAGE_PAGE_KEYBOARD_KEYPAD 0x07
 #define HID_USAGE_PAGE_LED             0x08
+#define HID_USAGE_PAGE_CONSUMER        0x0C
 
 /* USB HID Usage Tables 1.21, Section 4 Generic Desktop Page (0x01), p. 30 */
 #define HID_DESKTOP_KEYBOARD          0x06
+#define HID_DESKTOP_SYSTEM_CONTROL    0x80
 #define HID_DESKTOP_SYSTEM_POWER_DOWN 0x81
 #define HID_DESKTOP_SYSTEM_SLEEP      0x82
 #define HID_DESKTOP_SYSTEM_WAKE_UP    0x83
@@ -549,6 +551,7 @@ enum HID_RequestCode_t {
 #define HID_LED_SHIFT       0x40
 
 /* USB HID Usage Tables 1.21, Section 15 Consumer Page (0x0C), p. 117 */
+#define HID_CONSUMER_CONTROL                 0x0001
 #define HID_CONSUMER_BRIGHTNESS_INCREMENT    0x006F
 #define HID_CONSUMER_BRIGHTNESS_DECREMENT    0x0070
 #define HID_CONSUMER_RECORD                  0x00B2

@@ -13,7 +13,11 @@ bool USB_using_report_protocol = true;
 u16 USB_idle_timeout_duration = 500;
 u16 USB_idle_timeout_remaining = 0;
 
-local void _HID_send_report() {
+local void _HID_send_keyboard() {
+	if (USB_DEVICE_STATE != USB_DeviceState_Configured) {
+		return;
+	}
+
 	union {
 		USB_BootKeyboardReport_t boot;
 		USB_NkroKeyboardReport_t nkro;
@@ -40,6 +44,19 @@ local void _HID_send_report() {
 
 	USB_select_endpoint(USB_ENDPOINT_KEYBOARD_IN);
 	USB_transfer_data(&report, reportSize, false, USB_ENDPOINT_KEYBOARD_SIZE);
+}
+
+local void _HID_send_other(u8 reportId, u16 code) {
+	if (USB_DEVICE_STATE != USB_DeviceState_Configured) {
+		return;
+	}
+
+	USB_OtherReport_t report = {
+		.reportId = reportId,
+		.code = code
+	};
+	USB_select_endpoint(USB_ENDPOINT_OTHER_IN);
+	USB_transfer_data(&report, sizeof(report), false, USB_ENDPOINT_OTHER_SIZE);
 }
 
 void USB_init() {
@@ -70,9 +87,14 @@ void USB_init() {
 		USB_CFG1X_ENDPOINT_SIZE(USB_ENDPOINT_CONTROL_SIZE));
 }
 
-USB_LedReport_t USB_update() {
-	if (USB_DEVICE_STATE != USB_DeviceState_Configured) {
-		return 0;
-	}
-	_HID_send_report();
+void USB_update() {
+	_HID_send_keyboard();
+}
+
+void USB_send_system(u16 code) {
+	_HID_send_other(USB_REPORT_ID_SYSTEM, code);
+}
+
+void USB_send_consumer(u16 code) {
+	_HID_send_other(USB_REPORT_ID_CONSUMER, code);
 }

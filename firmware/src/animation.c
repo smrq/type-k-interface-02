@@ -17,7 +17,7 @@ local u32 _animationLastFrameTime;
 local u16 _animationFrame;
 
 void animation_init() {
-	_animationState = AnimationState_None;
+	_animationState = AnimationState_Startup;
 	_animationFrame = 0;
 	_animationLastFrameTime = timer_get_ms();
 }

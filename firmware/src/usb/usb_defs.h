@@ -18,8 +18,9 @@
 #define USB_CONFIGURATION_COUNT    1
 #define USB_CONFIGURATION_KEYBOARD 1
 
-#define USB_INTERFACE_COUNT        1
+#define USB_INTERFACE_COUNT        2
 #define USB_INTERFACE_KEYBOARD     1
+#define USB_INTERFACE_OTHER        2
 
 /*
 	We don't need to define OUT endpoints for HID devices:
@@ -32,9 +33,15 @@
 
 	- USB HID 1.11 Specification, section 4.4 Interfaces, p. 10
 */
-#define USB_ENDPOINT_COUNT         1
+#define USB_ENDPOINT_COUNT         2
 #define USB_ENDPOINT_KEYBOARD_IN   1
+#define USB_ENDPOINT_OTHER_IN      2
+
 #define USB_ENDPOINT_KEYBOARD_SIZE 32
+#define USB_ENDPOINT_OTHER_SIZE    8
+
+#define USB_REPORT_ID_SYSTEM       1
+#define USB_REPORT_ID_CONSUMER     2
 
 #define USB_VENDOR_ID              0xF055
 #define USB_PRODUCT_ID             0x4B32
@@ -54,3 +61,8 @@ typedef struct {
 } PACKED USB_BootKeyboardReport_t;
 
 typedef u8 USB_LedReport_t;
+
+typedef struct {
+	u8 reportId;
+	u16 code;
+} PACKED USB_OtherReport_t;

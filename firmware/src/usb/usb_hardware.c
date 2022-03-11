@@ -76,7 +76,7 @@ u8 USB_read_byte_from_endpoint() {
 	return UEDATX;
 }
 
-void USB_read_from_endpoint(void *buffer, u8 length) {
+void USB_read_from_endpoint(void *buffer, u16 length) {
 	for (u8 *ptr = (u8 *)buffer; ptr < (u8 *)buffer + length; ++ptr) {
 		*ptr = UEDATX;
 	}
@@ -148,7 +148,7 @@ void USB_clear_setup() {
 	UEINTX &= ~_BV(RXSTPI);
 }
 
-bool USB_transfer_data(const void *buffer, u8 length, bool fromProgmem, u8 endpointSize) {
+bool USB_transfer_data(const void *buffer, u16 length, bool fromProgmem, u8 endpointSize) {
 	do {
 		while (!USB_is_in_ready()) {
 			if (USB_DEVICE_STATE == USB_DeviceState_Detached ||

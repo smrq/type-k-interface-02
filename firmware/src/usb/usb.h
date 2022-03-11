@@ -12,4 +12,6 @@ extern u16 USB_idle_timeout_duration;
 extern u16 USB_idle_timeout_remaining;
 
 void USB_init();
-USB_LedReport_t USB_update();
+void USB_update();
+void USB_send_system(u16 code);
+void USB_send_consumer(u16 code);

@@ -108,6 +108,9 @@ local bool _USB_handle_set_configuration(u8 value) {
 		USB_configure_endpoint(USB_ENDPOINT_KEYBOARD_IN,
 			USB_CFG0X_ENDPOINT_TYPE_INTERRUPT | USB_CFG0X_ENDPOINT_DIRECTION_IN,
 			USB_CFG1X_ENDPOINT_SIZE(USB_ENDPOINT_KEYBOARD_SIZE));
+		USB_configure_endpoint(USB_ENDPOINT_OTHER_IN,
+			USB_CFG0X_ENDPOINT_TYPE_INTERRUPT | USB_CFG0X_ENDPOINT_DIRECTION_IN,
+			USB_CFG1X_ENDPOINT_SIZE(USB_ENDPOINT_OTHER_SIZE));
 		USB_select_endpoint(USB_ENDPOINT_CONTROL);
 		UDIEN |= _BV(SOFE);
 	} else {
@@ -122,13 +125,13 @@ local bool _USB_handle_set_configuration(u8 value) {
 }
 
 /* USB 1.1 Specification, section 9.4.3 Get Descriptor, p. 189 */
-local bool _USB_handle_get_descriptor(u16 value, u8 length) {
+local bool _USB_handle_get_descriptor(u16 value, u16 index, u16 length) {
 	u8 descriptorType = (value >> 8) & 0xFF;
 	u8 descriptorIndex = (value >> 0) & 0xFF;
 
 	const void *descriptorAddress;
 	u16 descriptorSize;
-	if (!USB_get_descriptor(descriptorType, descriptorIndex, &descriptorAddress, &descriptorSize)) {
+	if (!USB_get_descriptor(descriptorType, descriptorIndex, index, &descriptorAddress, &descriptorSize)) {
 		return false;
 	}
 
@@ -294,12 +297,12 @@ local bool _USB_handle_get_endpoint_status(u8 index) {
 }
 
 /* USB HID 1.11 Specification, section 7.2.1 Get_Report Request, p. 51 */
-local bool _USB_handle_get_report(u8 length) {
+local bool _USB_handle_get_report(u16 length) {
 	union {
 		USB_BootKeyboardReport_t boot;
 		USB_NkroKeyboardReport_t nkro;
 	} report = { 0 };
-	u8 reportSize;
+	u16 reportSize;
 
 	if (USB_using_report_protocol) {
 		USB_populate_nkro_keyboard_report(&report.nkro);
@@ -393,6 +396,7 @@ local void _USB_handle_control_request(USB_DeviceRequest_t *controlRequest) {
 	#define ATTR_H2D_CLS_INT (USB_REQUEST_ATTRIBUTE_DIRECTION_HOST_TO_DEVICE | USB_REQUEST_ATTRIBUTE_TYPE_CLASS | USB_REQUEST_ATTRIBUTE_RECIPIENT_INTERFACE)
 	#define REQUEST(req, type) (((req) << 8) | (type))
 
+
 	switch (*(u16 *)controlRequest) {
 		/* USB 1.1 Specification, section 9.4.1 Clear Feature, p. 188 */
 		case REQUEST(USB_RequestCode_ClearFeature, ATTR_H2D_STD_DEV):
@@ -412,7 +416,7 @@ local void _USB_handle_control_request(USB_DeviceRequest_t *controlRequest) {
 		/* USB 1.1 Specification, section 9.4.3 Get Descriptor, p. 189 */
 		case REQUEST(USB_RequestCode_GetDescriptor, ATTR_D2H_STD_DEV):
 		case REQUEST(USB_RequestCode_GetDescriptor, ATTR_D2H_STD_INT):
-			handled = _USB_handle_get_descriptor(controlRequest->value, controlRequest->length);
+			handled = _USB_handle_get_descriptor(controlRequest->value, controlRequest->index, controlRequest->length);
 			break;
 
 		/* USB 1.1 Specification, section 9.4.5 Get Status, p. 190 */
