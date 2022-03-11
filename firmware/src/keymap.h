@@ -142,7 +142,7 @@ extern const PROGMEM Keymap_t keymap;
 #define KC_KP_0                 HID_KEYPAD_0_INSERT
 #define KC_KP_DOT               HID_KEYPAD_DOT_DELETE
 #define KC_NON_US_BSLASH        HID_KEYBOARD_NON_US_BACKSLASH_PIPE
-#define KC_APPLICATION          HID_KEYBOARD_APPLICATION
+#define KC_APP                  HID_KEYBOARD_APPLICATION
 #define KC_POWER                HID_KEYBOARD_POWER
 #define KC_KP_EQUAL             HID_KEYPAD_EQUAL
 #define KC_F13                  HID_KEYBOARD_F13
