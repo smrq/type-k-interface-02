@@ -42,14 +42,15 @@ local void _HID_send_report() {
 	USB_transfer_data(&report, reportSize, false, USB_ENDPOINT_KEYBOARD_SIZE);
 }
 
-local USB_LedReport_t _HID_receive_report() {
+local void _HID_receive_report() {
 	USB_select_endpoint(USB_ENDPOINT_KEYBOARD_OUT);
 	if (!USB_is_out_ready()) {
-		return 0;
+		return;
 	}
 	USB_LedReport_t report = USB_read_byte_from_endpoint();
 	USB_clear_out();
-	return report;
+
+	USB_process_led_report(report);
 }
 
 void USB_init() {
@@ -85,5 +86,5 @@ USB_LedReport_t USB_update() {
 		return 0;
 	}
 	_HID_send_report();
-	return _HID_receive_report();
+	_HID_receive_report();
 }

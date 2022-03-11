@@ -12,16 +12,6 @@ enum Encoder_State_t encoder_get_state() {
 	switch (_previousState) {
 		case 0b00:
 			return
-				_currentState == 0b10 ? Encoder_State_CW :
-				_currentState == 0b01 ? Encoder_State_CCW :
-				Encoder_State_None;
-		case 0b10:
-			return
-				_currentState == 0b11 ? Encoder_State_CW :
-				_currentState == 0b00 ? Encoder_State_CCW :
-				Encoder_State_None;
-		case 0b11:
-			return
 				_currentState == 0b01 ? Encoder_State_CW :
 				_currentState == 0b10 ? Encoder_State_CCW :
 				Encoder_State_None;
@@ -29,6 +19,16 @@ enum Encoder_State_t encoder_get_state() {
 			return
 				_currentState == 0b11 ? Encoder_State_CW :
 				_currentState == 0b00 ? Encoder_State_CCW :
+				Encoder_State_None;
+		case 0b11:
+			return
+				_currentState == 0b10 ? Encoder_State_CW :
+				_currentState == 0b01 ? Encoder_State_CCW :
+				Encoder_State_None;
+		case 0b10:
+			return
+				_currentState == 0b00 ? Encoder_State_CW :
+				_currentState == 0b11 ? Encoder_State_CCW :
 				Encoder_State_None;
 		default: // This should never happen.
 			return Encoder_State_None;

@@ -12,6 +12,7 @@ void setup() {
 	WDTCSR = 0x00;
 
 	// Disable JTAG interface
+	// This is enabled by default by the fuse bits of a stock MCU.
 	/*
 		In order to avoid unintentional disabling or enabling of the JTAG interface, a timed
 		sequence must be followed when changing this bit: The application software must write
@@ -66,7 +67,7 @@ void setup() {
 	TWI_init();
 	OLED_init();
 	animation_init();
-	// USB_init();
+	USB_init();
 
 	ENABLE_GLOBAL_INTERRUPTS();
 }
@@ -75,7 +76,7 @@ u32 loopcount;
 
 void loop() {
 	keyboard_update();
-	// USB_update();
+	USB_update();
 	animation_tick();
 }
 

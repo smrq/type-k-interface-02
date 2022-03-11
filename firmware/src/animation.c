@@ -2,7 +2,8 @@
 
 enum AnimationState_t {
 	AnimationState_Startup,
-	AnimationState_KeyboardInfo
+	AnimationState_KeyboardInfo,
+	AnimationState_Debug,
 };
 
 enum AnimationResult_t {
@@ -15,8 +16,7 @@ local u32 _animationLastFrameTime;
 local u16 _animationFrame;
 
 void animation_init() {
-	// _animationState = AnimationState_Startup;
-	_animationState = AnimationState_KeyboardInfo;
+	_animationState = AnimationState_Startup;
 	_animationFrame = 0;
 	_animationLastFrameTime = timer_get_ms();
 }
@@ -92,7 +92,7 @@ local enum AnimationResult_t _animation_startup() {
 			OLED_flip();
 			return AnimationResult_Continue;
 
-		case 60:
+		case 80:
 			return AnimationResult_Finished;
 
 		default:
@@ -100,7 +100,7 @@ local enum AnimationResult_t _animation_startup() {
 	}
 }
 
-local enum AnimationResult_t _animation_keyboard_info() {
+local enum AnimationResult_t _animation_debug() {
 	LED_clear();
 	OLED_clear();
 
@@ -122,26 +122,41 @@ local enum AnimationResult_t _animation_keyboard_info() {
 		}
 	}
 
-	// enum Encoder_State_t encoderState = encoder_get_state();
-	// OLED_draw_text(3*COLUMN_COUNT+6, -2,
-	// 	encoderState == Encoder_State_CW ? "cw" :
-	// 	encoderState == Encoder_State_CCW ? "ccw" :
-	// 	"no",
-	// 	font_regular, font_offset_regular, true);
-
-	// i16 x = 0;
-	// x = OLED_draw_text(x, -2, "TYPE-K ", font_regular, font_offset_regular, true);
-	// x = OLED_draw_text(x, -2, "$s?|U'|9", font_kana, font_offset_kana, true); // "インターフェース"
-	// x = OLED_draw_text(x, -2, " 02", font_regular, font_offset_regular, true);
-	// OLED_draw_horizontal_line(0, 127, 11, true);
-
-	// USB_LedReport_t status = keyboard_get_status();
-	// x = 0;
-	// x = OLED_draw_text(x, 13, status & HID_LED_NUM_LOCK ? "NUM  " : "---  ", font_regular, font_offset_regular, true);
-	// x = OLED_draw_text(x, 13, status & HID_LED_CAPS_LOCK ? "CAPS  " : "----  ", font_regular, font_offset_regular, true);
-	// x = OLED_draw_text(x, 13, status & HID_LED_SCROLL_LOCK ? "SCR  " : "---  ", font_regular, font_offset_regular, true);
+	enum Encoder_State_t encoderState = encoder_get_state();
+	OLED_draw_text(3*COLUMN_COUNT+6, -2,
+		encoderState == Encoder_State_CW ? "cw" :
+		encoderState == Encoder_State_CCW ? "ccw" :
+		"",
+		font_regular, font_offset_regular, true);
 
 	LED_update();
+	OLED_flip();
+	return AnimationResult_Continue;
+}
+
+local void _draw_status_indicator(i16 x0, i16 y0, i16 x1, i16 y1, const char *text, bool status) {
+	if (status) {
+		OLED_draw_filled_rectangle(x0, y0, x1, y1, true);
+		OLED_draw_text(x0+4, y0, text, font_regular, font_offset_regular, false);
+	} else {
+		OLED_draw_text(x0+4, y0, text, font_regular, font_offset_regular, true);
+	}
+}
+
+local enum AnimationResult_t _animation_keyboard_info() {
+	OLED_clear();
+
+	i16 x = 0;
+	x = OLED_draw_text(x, -3, "TYPE-K ", font_regular, font_offset_regular, true);
+	x = OLED_draw_text(x, -3, "$s?|U'|9", font_kana, font_offset_kana, true); // "インターフェース"
+	x = OLED_draw_text(x, -3, " 02", font_regular, font_offset_regular, true);
+	OLED_draw_horizontal_line(0, 127, 10, true);
+
+	USB_LedReport_t status = keyboard_get_status();
+	_draw_status_indicator(0, 11, 28, 24, "NUM", status & HID_LED_NUM_LOCK);
+	_draw_status_indicator(47, 11, 81, 24, "CAPS", status & HID_LED_CAPS_LOCK);
+	_draw_status_indicator(99, 11, 127, 24, "SCR", status & HID_LED_SCROLL_LOCK);
+
 	OLED_flip();
 	return AnimationResult_Continue;
 }
@@ -165,6 +180,10 @@ void animation_tick() {
 
 		case AnimationState_KeyboardInfo:
 			result = _animation_keyboard_info();
+			break;
+
+		case AnimationState_Debug:
+			result = _animation_debug();
 			break;
 	}
 }

@@ -543,10 +543,10 @@ enum HID_RequestCode_t {
 /* USB HID Usage Tables 1.21, Section 11 LED Page (0x08), p. 90 */
 #define HID_LED_NUM_LOCK    0x01
 #define HID_LED_CAPS_LOCK   0x02
-#define HID_LED_SCROLL_LOCK 0x03
-#define HID_LED_COMPOSE     0x04
-#define HID_LED_KANA        0x05
-#define HID_LED_SHIFT       0x07
+#define HID_LED_SCROLL_LOCK 0x04
+#define HID_LED_COMPOSE     0x08
+#define HID_LED_KANA        0x10
+#define HID_LED_SHIFT       0x40
 
 /* USB HID Usage Tables 1.21, Section 15 Consumer Page (0x0C), p. 117 */
 #define HID_CONSUMER_BRIGHTNESS_INCREMENT    0x006F

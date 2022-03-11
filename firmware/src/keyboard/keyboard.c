@@ -8,8 +8,7 @@ void keyboard_update() {
 }
 
 local void _keyboard_handle_scancode(USB_NkroKeyboardReport_t *report, u8 scancode) {
-	// TODO: verify keyboard kinda works before turning on
-	// report->keys[scancode / 8] |= _BV(scancode % 8);
+	report->keys[scancode / 8] |= _BV(scancode % 8);
 }
 
 local void _keyboard_handle_code(USB_NkroKeyboardReport_t *report, u8 code) {
