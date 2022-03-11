@@ -15,6 +15,8 @@ typedef struct {
 
 extern const PROGMEM Keymap_t keymap;
 
+void keymap_user_macro(u8 index, bool held);
+
 #define KEYMAP_LAYER( \
 	KA00, KA01, KA02, KA03, KA04, KA05, KA06, KA07, KA08, KA09, KA10, KA11, KA12,   KA13, KA14, KA15, KA16,      KA18,       KA20,    \
 	KB00, KB01, KB02, KB03, KB04, KB05, KB06, KB07, KB08, KB09, KB10, KB11, KB12,   KB13, KB14, KB15, KB16,      KB18,       KB20,    \
@@ -34,17 +36,14 @@ extern const PROGMEM Keymap_t keymap;
 	{ KG01, KG02, KF03, KF04, KG06, KF07, KF08, KF09, KG10, KG12, KG13, KG14, KG15, KG17, KG19, KG20 }  \
 }
 
-#define KEYMAP_IS_SCANCODE(n) (((n) >= 0x04 && (n) <= 0xA4) || ((n) >= 0xE0 && (n) <= 0xE7))
-#define KEYMAP_IS_CONSUMER(n) ((n) >= 0xA5 && (n) <= 0xBF)
-#define KEYMAP_IS_USER(n)     ((n) >= 0xC0 && (n) <= 0xDF)
-#define KEYMAP_IS_FIRMWARE(n) ((n) >= 0xE8 && (n) <= 0xEF)
-#define KEYMAP_IS_LAYER(n)    ((n) >= 0xF0)
-
-#define KEYMAP_LAYER_MASK 0x0F
+// Keymap constants
 
 #define KC_NULL        0x00
 #define KC_TRANSPARENT 0x01
 
+// Keyboard scancodes
+
+#define KEYMAP_IS_SCANCODE(n)   (((n) >= 0x04 && (n) <= 0xA4) || ((n) >= 0xE0 && (n) <= 0xE7))
 #define KC_A                    HID_KEYBOARD_A
 #define KC_B                    HID_KEYBOARD_B
 #define KC_C                    HID_KEYBOARD_C
@@ -252,7 +251,6 @@ extern const PROGMEM Keymap_t keymap;
 #define KC_KP_OCT               HID_KEYPAD_OCTAL
 #define KC_KP_DEC               HID_KEYPAD_DECIMAL
 #define KC_KP_HEX               HID_KEYPAD_HEXADECIMAL
-
 #define KC_LCTRL                HID_KEYBOARD_LCONTROL
 #define KC_LSHIFT               HID_KEYBOARD_LSHIFT
 #define KC_LALT                 HID_KEYBOARD_LALT
@@ -262,22 +260,65 @@ extern const PROGMEM Keymap_t keymap;
 #define KC_RALT                 HID_KEYBOARD_RALT
 #define KC_RGUI                 HID_KEYBOARD_RGUI
 
-#define KC_BRIGHTNESS_INC     0xA5
-#define KC_BRIGHTNESS_DEC     0xA6
-#define KC_MEDIA_FAST_FORWARD 0xA7
-#define KC_MEDIA_REWIND       0xA8
-#define KC_MEDIA_NEXT_TRACK   0xA9
-#define KC_MEDIA_PREV_TRACK   0xAA
-#define KC_MEDIA_STOP         0xAB
-#define KC_MEDIA_PLAY_PAUSE   0xAC
-#define KC_AUDIO_MUTE         0xAD
-#define KC_AUDIO_VOL_UP       0xAE
-#define KC_AUDIO_VOL_DOWN     0xAF
-#define KC_MEDIA_SELECT       0xB0
-#define KC_MAIL               0xB1
-#define KC_CALCULATOR         0xB2
-#define KC_MY_COMPUTER        0xB3
+// System control page
 
+#define KEYMAP_IS_SYSTEM(n)   ((n) >= 0xA5 && (n) <= 0xAF)
+#define KC_SYSTEM_POWER_DOWN  0xA5
+#define KC_SYSTEM_SLEEP       0xA6
+#define KC_SYSTEM_WAKE        0xA7
+
+inline u16 keymap_code_to_system(u8 code) {
+	switch (code) {
+		case KC_SYSTEM_POWER_DOWN: return HID_DESKTOP_SYSTEM_POWER_DOWN;
+		case KC_SYSTEM_SLEEP     : return HID_DESKTOP_SYSTEM_SLEEP;
+		case KC_SYSTEM_WAKE      : return HID_DESKTOP_SYSTEM_WAKE_UP;
+		default: return 0;
+	}
+}
+
+// Consumer page
+
+#define KEYMAP_IS_CONSUMER(n) ((n) >= 0xB0 && (n) <= 0xBF)
+#define KC_BRIGHTNESS_INC     0xB0
+#define KC_BRIGHTNESS_DEC     0xB1
+#define KC_MEDIA_FAST_FORWARD 0xB2
+#define KC_MEDIA_REWIND       0xB3
+#define KC_MEDIA_NEXT_TRACK   0xB4
+#define KC_MEDIA_PREV_TRACK   0xB5
+#define KC_MEDIA_STOP         0xB6
+#define KC_MEDIA_PLAY_PAUSE   0xB7
+#define KC_AUDIO_MUTE         0xB8
+#define KC_AUDIO_VOL_UP       0xB9
+#define KC_AUDIO_VOL_DOWN     0xBA
+#define KC_MEDIA_SELECT       0xBB
+#define KC_MAIL               0xBC
+#define KC_CALCULATOR         0xBD
+#define KC_MY_COMPUTER        0xBE
+
+inline u16 keymap_code_to_consumer(u8 code) {
+	switch (code) {
+		case KC_BRIGHTNESS_INC    : return HID_CONSUMER_BRIGHTNESS_INCREMENT;
+		case KC_BRIGHTNESS_DEC    : return HID_CONSUMER_BRIGHTNESS_DECREMENT;
+		case KC_MEDIA_FAST_FORWARD: return HID_CONSUMER_FAST_FORWARD;
+		case KC_MEDIA_REWIND      : return HID_CONSUMER_REWIND;
+		case KC_MEDIA_NEXT_TRACK  : return HID_CONSUMER_SCAN_NEXT_TRACK;
+		case KC_MEDIA_PREV_TRACK  : return HID_CONSUMER_SCAN_PREVIOUS_TRACK;
+		case KC_MEDIA_STOP        : return HID_CONSUMER_STOP;
+		case KC_MEDIA_PLAY_PAUSE  : return HID_CONSUMER_PLAY_PAUSE;
+		case KC_AUDIO_MUTE        : return HID_CONSUMER_MUTE;
+		case KC_AUDIO_VOL_UP      : return HID_CONSUMER_VOLUME_INCREMENT;
+		case KC_AUDIO_VOL_DOWN    : return HID_CONSUMER_VOLUME_DECREMENT;
+		case KC_MEDIA_SELECT      : return HID_CONSUMER_APPLAUNCH_CC_CONFIG;
+		case KC_MAIL              : return HID_CONSUMER_APPLAUNCH_EMAIL;
+		case KC_CALCULATOR        : return HID_CONSUMER_APPLAUNCH_CALCULATOR;
+		case KC_MY_COMPUTER       : return HID_CONSUMER_APPLAUNCH_LOCAL_BROWSER;
+		default: return 0;
+	}
+}
+
+// User macros
+
+#define KEYMAP_IS_USER(n)     ((n) >= 0xC0 && (n) <= 0xDF)
 #define KC_USER0              0xC0
 #define KC_USER1              0xC1
 #define KC_USER2              0xC2
@@ -311,4 +352,20 @@ extern const PROGMEM Keymap_t keymap;
 #define KC_USER30             0xDE
 #define KC_USER31             0xDF
 
+inline u8 keymap_code_to_user(u8 code) {
+	return code & 0x0F;
+}
+
+// Firmware functions
+
+#define KEYMAP_IS_FIRMWARE(n) ((n) >= 0xE8 && (n) <= 0xEF)
+#define KC_FW_RESET           0xE8
+
+// Layer shifts
+
+#define KEYMAP_IS_LAYER(n)    ((n) >= 0xF0)
 #define KC_LAYER(n)           (0xF0 | n)
+
+inline u8 keymap_code_to_layer(u8 code) {
+	return code & 0x0F;
+}

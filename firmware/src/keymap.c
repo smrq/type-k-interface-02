@@ -20,3 +20,7 @@ const PROGMEM Keymap_t keymap = {
 		.ccw = KC_AUDIO_VOL_DOWN
 	}
 };
+
+void keymap_user_macro(u8 index, bool held) {
+
+}

@@ -91,7 +91,7 @@ local const PROGMEM u8 _otherReportDescriptor[] = {
 	HID_USAGE_MAXIMUM   (8, 0xB7),
 	HID_REPORT_SIZE     (8, 0x10),
 	HID_REPORT_COUNT    (8, 0x01),
-	HID_INPUT           (8, HID_DATA | HID_VARIABLE | HID_ABSOLUTE),
+	HID_INPUT           (8, HID_DATA | HID_ARRAY | HID_ABSOLUTE),
 
 	HID_END_COLLECTION  (0),
 
@@ -106,7 +106,7 @@ local const PROGMEM u8 _otherReportDescriptor[] = {
 	HID_USAGE_MAXIMUM   (16, 0x0514),
 	HID_REPORT_SIZE     (8, 0x10),
 	HID_REPORT_COUNT    (8, 0x01),
-	HID_INPUT           (8, HID_DATA | HID_VARIABLE | HID_ABSOLUTE),
+	HID_INPUT           (8, HID_DATA | HID_ARRAY | HID_ABSOLUTE),
 
 	HID_END_COLLECTION  (0)
 };
