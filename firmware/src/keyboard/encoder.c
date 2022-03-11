@@ -1,11 +1,11 @@
 #include "encoder.h"
 
-u8 _previousState = 0;
-u8 _currentState = 0;
+local u8 _previousState = 0;
+local u8 _currentState = 0;
 
 void encoder_update() {
 	_previousState = _currentState;
-	_currentState = ((PORTC & _BV(6)) >> 6) | ((PORTD & _BV(2)) >> 1);
+	_currentState = ((PINC & _BV(6)) >> 6) | ((PIND & _BV(2)) >> 1);
 }
 
 enum Encoder_State_t encoder_get_state() {

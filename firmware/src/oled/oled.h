@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../defs.h"
-#include "../font/fonts.h"
+#include "../fonts/fonts.h"
 #include "twi.h"
 
 #define OLED_WIDTH 128
@@ -11,7 +11,6 @@
 void OLED_init();
 void OLED_flip();
 void OLED_clear();
-void OLED_test_pattern(u8 n);
 void OLED_draw_pixel(i16 x, i16 y, bool color);
 void OLED_draw_horizontal_line(i16 x0, i16 x1, i16 y, bool color);
 void OLED_draw_vertical_line(i16 x, i16 y0, i16 y1, bool color);

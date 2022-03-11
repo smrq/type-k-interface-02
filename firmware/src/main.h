@@ -2,8 +2,8 @@
 
 #include "defs.h"
 #include "animation.h"
-#include "font/fonts.h"
-#include "keys/keyboard.h"
+#include "fonts/fonts.h"
+#include "keyboard/keyboard.h"
 #include "led/led.h"
 #include "oled/console.h"
 #include "oled/oled.h"

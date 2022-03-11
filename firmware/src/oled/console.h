@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../defs.h"
 #include "oled.h"
 
 void console_reset();

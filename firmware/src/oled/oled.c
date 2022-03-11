@@ -1,6 +1,6 @@
 #include "oled.h"
 
-const PROGMEM u8 initCommand[] = {
+local const PROGMEM u8 _initCommand[] = {
 	0x00,
 	0xAE, // Set Display OFF
 	0xD5, 0x81, // Set Display Clock Divide Ratio / Oscillator Frequency
@@ -19,8 +19,8 @@ const PROGMEM u8 initCommand[] = {
 	0xAF, // Set Display ON
 };
 
-u8 backPage = 1;
-u8 framebuffer[1+OLED_WIDTH*OLED_HEIGHT/8] = { 0x40, 0 };
+local u8 _backPage = 1;
+local u8 _framebuffer[1+OLED_WIDTH*OLED_HEIGHT/8] = { 0x40, 0 };
 
 local void _OLED_copy_framebuffer(u8 page) {
 	u8 command[] = {
@@ -29,7 +29,7 @@ local void _OLED_copy_framebuffer(u8 page) {
 		0x22, (page<<2), ((page+1)<<2)-1, // Set Page Address
 	};
 	TWI_BLOCKING(TWI_send(OLED_ADDRESS, command, sizeof(command)));
-	TWI_BLOCKING(TWI_send(OLED_ADDRESS, framebuffer, sizeof(framebuffer)));
+	TWI_BLOCKING(TWI_send(OLED_ADDRESS, _framebuffer, sizeof(_framebuffer)));
 }
 
 local void _OLED_set_visible_page(u8 page) {
@@ -41,64 +41,27 @@ local void _OLED_set_visible_page(u8 page) {
 }
 
 void OLED_init() {
-	TWI_BLOCKING(TWI_send_progmem(OLED_ADDRESS, initCommand, sizeof(initCommand)));
+	TWI_BLOCKING(TWI_send_progmem(OLED_ADDRESS, _initCommand, sizeof(_initCommand)));
 	_OLED_copy_framebuffer(0);
 	_OLED_copy_framebuffer(1);
 }
 
 void OLED_flip() {
-	_OLED_copy_framebuffer(backPage);
-	_OLED_set_visible_page(backPage);
-	backPage = !backPage;
+	_OLED_copy_framebuffer(_backPage);
+	_OLED_set_visible_page(_backPage);
+	_backPage = !_backPage;
 }
 
 void OLED_clear() {
-	for (size_t i = 1; i < sizeof(framebuffer); ++i) {
-		framebuffer[i] = 0x00;
-	}
-}
-
-void OLED_test_pattern(u8 n) {
-	switch (n) {
-		case 0:
-			for (size_t i = 1; i < sizeof(framebuffer); i+=2) {
-				framebuffer[i] = 0x55;
-				framebuffer[i+1] = 0xAA;
-			}
-			break;
-		case 1:
-			for (size_t i = 1; i < sizeof(framebuffer); i+=8) {
-				framebuffer[i] = 0x0F;
-				framebuffer[i+1] = 0x0F;
-				framebuffer[i+2] = 0x0F;
-				framebuffer[i+3] = 0x0F;
-				framebuffer[i+4] = 0xF0;
-				framebuffer[i+5] = 0xF0;
-				framebuffer[i+6] = 0xF0;
-				framebuffer[i+7] = 0xF0;
-			}
-			break;
-		case 2:
-			for (size_t i = 1; i < sizeof(framebuffer); i+=8) {
-				framebuffer[i] = 0x03;
-				framebuffer[i+1] = 0x06;
-				framebuffer[i+2] = 0x0C;
-				framebuffer[i+3] = 0x18;
-				framebuffer[i+4] = 0x30;
-				framebuffer[i+5] = 0x60;
-				framebuffer[i+6] = 0xC0;
-				framebuffer[i+7] = 0x81;
-			}
-			break;
-	}
+	memset(_framebuffer+1, 0, sizeof(_framebuffer)-1);
 }
 
 void OLED_draw_pixel(i16 x, i16 y, bool color) {
 	if (x < 0 || x >= OLED_WIDTH || y < 0 || y >= OLED_HEIGHT) return;
 	if (color) {
-		framebuffer[1 + x + OLED_WIDTH*(y>>3)] |= (1<<(y % 8));
+		_framebuffer[1 + x + OLED_WIDTH*(y>>3)] |= (1<<(y % 8));
 	} else {
-		framebuffer[1 + x + OLED_WIDTH*(y>>3)] &= ~(1<<(y % 8));
+		_framebuffer[1 + x + OLED_WIDTH*(y>>3)] &= ~(1<<(y % 8));
 	}
 }
 
@@ -249,9 +212,9 @@ i16 OLED_draw_char(i16 x, i16 y, char c, const u16 *font, const u16 *fontOffset,
 
 		while (pattern && yByte < (OLED_HEIGHT >> 3)) {
 			if (color) {
-				framebuffer[1 + x + OLED_WIDTH*yByte] |= pattern & 0xFF;
+				_framebuffer[1 + x + OLED_WIDTH*yByte] |= pattern & 0xFF;
 			} else {
-				framebuffer[1 + x + OLED_WIDTH*yByte] &= ~(pattern & 0xFF);
+				_framebuffer[1 + x + OLED_WIDTH*yByte] &= ~(pattern & 0xFF);
 			}
 			pattern = pattern >> 8;
 			++yByte;
@@ -270,18 +233,18 @@ i16 OLED_draw_text(i16 x, i16 y, const char *text, const u16 *font, const u16 *f
 void OLED_scroll_vertical(i16 dy) {
 	for (i16 x = 0; x < OLED_WIDTH; ++x) {
 		u32 column =
-			((u32)framebuffer[1 + x]) |
-			((u32)framebuffer[1 + x + OLED_WIDTH] << 8) |
-			((u32)framebuffer[1 + x + 2*OLED_WIDTH] << 16) |
-			((u32)framebuffer[1 + x + 3*OLED_WIDTH] << 24);
+			((u32)_framebuffer[1 + x]) |
+			((u32)_framebuffer[1 + x + OLED_WIDTH] << 8) |
+			((u32)_framebuffer[1 + x + 2*OLED_WIDTH] << 16) |
+			((u32)_framebuffer[1 + x + 3*OLED_WIDTH] << 24);
 		if (dy > 0) {
 			column = column >> dy;
 		} else {
 			column = column >> -dy;
 		}
-		framebuffer[1 + x] = column & 0xFF;
-		framebuffer[1 + x + OLED_WIDTH] = (column >> 8) & 0xFF;
-		framebuffer[1 + x + 2*OLED_WIDTH] = (column >> 16) & 0xFF;
-		framebuffer[1 + x + 3*OLED_WIDTH] = (column >> 24) & 0xFF;
+		_framebuffer[1 + x] = column & 0xFF;
+		_framebuffer[1 + x + OLED_WIDTH] = (column >> 8) & 0xFF;
+		_framebuffer[1 + x + 2*OLED_WIDTH] = (column >> 16) & 0xFF;
+		_framebuffer[1 + x + 3*OLED_WIDTH] = (column >> 24) & 0xFF;
 	}
 }

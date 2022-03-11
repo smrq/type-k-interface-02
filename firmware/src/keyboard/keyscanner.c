@@ -26,30 +26,35 @@ local void keyscanner_debounce(Keyscanner_ColumnState_t *column, u8 pressed) {
 }
 
 void keyscanner_update() {
+	// Column bit pins (MSB to LSB): D7 E6 B4 B5
 	for (u8 column = 0; column < COLUMN_COUNT; ++column) {
-		PORTB = (PORTB & ~(_BV(4) | _BV(5))) | ((column & 1) << 5) | (((column >> 1) & 1) << 4);
-		PORTD = (PORTD & ~(_BV(7))) | (((column >> 3) & 1) << 7);
+		PORTB = (PORTB & ~(_BV(4) | _BV(5))) | (((column >> 0) & 1) << 5) | (((column >> 1) & 1) << 4);
 		PORTE = (PORTE & ~(_BV(6))) | (((column >> 2) & 1) << 6);
-		/*
-			When reading back a software assigned pin value, a nop instruction must be
-			inserted as indicated in Figure 10-4.
-				- ATmega32U4 datasheet, p. 70
+		PORTD = (PORTD & ~(_BV(7))) | (((column >> 3) & 1) << 7);
 
-			Since we're using multiple ports, this should take more than a single instruction
-			between each write and read.
-		*/
-		u8 pinb = PINB;
-		u8 pind = PIND;
-		u8 pinf = PINF;
-		u8 rows = ~(
-			((pind & _BV(3)) >> 3) |
-			(pinb & _BV(1)) |
-			((pinb & _BV(3)) >> 1) |
-			((pinb & _BV(2)) << 1) |
-			(pinf & (_BV(4) | _BV(5) | _BV(6) | _BV(7)))
+		// Wait for signal to propagate
+		asm volatile(
+			"  nop\n\t"
+			"  nop\n\t"
+			"  nop\n\t"
+			"  nop\n\t"
+			"  nop\n\t"
+			"  nop\n\t"
+			"  nop\n\t"
+			"  nop\n\t"
 		);
 
-		keyscanner_debounce(&columnState[column], rows);
+		// Row pins (MSB to LSB): F7 F6 F5 F4 B2 B3 B1 D3
+		u8 rows = ~(
+			(((PIND >> 3) & 1) << 0) |
+			(((PINB >> 1) & 1) << 1) |
+			(((PINB >> 3) & 1) << 2) |
+			(((PINB >> 2) & 1) << 3) |
+			(PINF & 0xF0)
+		);
+
+		// keyscanner_debounce(&columnState[column], rows);
+		columnState[column].current = rows;
 	}
 	PORTB = PORTB & ~(_BV(4) | _BV(5));
 	PORTE = PORTE & ~(_BV(6));

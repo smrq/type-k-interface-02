@@ -7,9 +7,19 @@ void setup() {
 	// Disable watchdog timer
 	// This should be the default, but after flashing with dfu-programmer,
 	// the watchdog seems to be left running.
-	MCUSR &= ~(1<<WDRF);
-	WDTCSR |= (1<<WDCE) | (1<<WDE);
+	MCUSR &= ~_BV(WDRF);
+	WDTCSR |= _BV(WDCE) | _BV(WDE);
 	WDTCSR = 0x00;
+
+	// Disable JTAG interface
+	/*
+		In order to avoid unintentional disabling or enabling of the JTAG interface, a timed
+		sequence must be followed when changing this bit: The application software must write
+		this bit to the desired value twice within four cycles to change its value.
+			- ATmega32U4 datasheet, 26.5.1, p. 328
+	*/
+	MCUCR |= _BV(JTD);
+	MCUCR |= _BV(JTD);
 
 	// Port B
 	// 0: Unused       [input, pull-up]
@@ -52,12 +62,11 @@ void setup() {
 	DDRF = 0;
 
 	timer_init();
-	
 	LED_init();
-
 	TWI_init();
 	OLED_init();
-	USB_init();
+	animation_init();
+	// USB_init();
 
 	ENABLE_GLOBAL_INTERRUPTS();
 }
@@ -66,7 +75,7 @@ u32 loopcount;
 
 void loop() {
 	keyboard_update();
-	USB_update();
+	// USB_update();
 	animation_tick();
 }
 

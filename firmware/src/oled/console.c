@@ -1,24 +1,24 @@
 #include "console.h"
 
-i16 cursorX;
-bool newline = false;
+local i16 _cursorX;
+local bool _newline = false;
 
 void console_write(const char *text) {
 	while (*text) {
 		if (*text == '\n') {
-			cursorX = 0;
-			newline = true;
+			_cursorX = 0;
+			_newline = true;
 		} else if (*text == '\r') {
-			cursorX = 0;
+			_cursorX = 0;
 		} else {
-			if (newline) {
+			if (_newline) {
 				OLED_scroll_vertical(FONT_HEIGHT-1);
-				newline = false;
+				_newline = false;
 			}
-			cursorX = OLED_draw_char(cursorX, OLED_HEIGHT - FONT_HEIGHT, *text, font_regular, font_offset_regular, true);
-			if (cursorX >= OLED_WIDTH) {
-				cursorX = 0;
-				newline = true;
+			_cursorX = OLED_draw_char(_cursorX, OLED_HEIGHT - FONT_HEIGHT, *text, font_regular, font_offset_regular, true);
+			if (_cursorX >= OLED_WIDTH) {
+				_cursorX = 0;
+				_newline = true;
 			}
 		}
 		++text;

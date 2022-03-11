@@ -1,6 +1,6 @@
 #include "timer.h"
 
-volatile u32 timer_ms = 0;
+local volatile u32 _timer_ms = 0;
 
 void timer_init() {
 	// 13.8.1 Timer/Counter Control Register A – TCCR0A
@@ -11,9 +11,9 @@ void timer_init() {
 }
 
 u32 timer_get_ms() {
-	return timer_ms;
+	return _timer_ms;
 }
 
 ISR(TIMER0_COMPA_vect, ISR_NOBLOCK) {
-	++timer_ms;
+	++_timer_ms;
 }

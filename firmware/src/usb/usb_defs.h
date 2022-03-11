@@ -32,3 +32,15 @@
 
 #define USB_MANUFACTURER_NAME      L"smrq"
 #define USB_PRODUCT_NAME           L"TYPE-K Interface 02"
+
+typedef struct {
+	u8 keys[32];
+} PACKED USB_NkroKeyboardReport_t;
+
+typedef struct {
+	u8 modifiers;
+	u8 reserved;
+	u8 keyCodes[6];
+} PACKED USB_BootKeyboardReport_t;
+
+typedef u8 USB_LedReport_t;

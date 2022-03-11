@@ -4,7 +4,13 @@
 #include "usb/usb_spec.h"
 
 typedef struct {
+	u8 cw;
+	u8 ccw;
+} Keymap_Encoder_t;
+
+typedef struct {
 	u8 layers[LAYER_COUNT][ROW_COUNT][COLUMN_COUNT];
+	Keymap_Encoder_t encoder;
 } Keymap_t;
 
 extern const PROGMEM Keymap_t keymap;
@@ -28,10 +34,9 @@ extern const PROGMEM Keymap_t keymap;
 	{ KG01, KG02, KF03, KF04, KG06, KF07, KF08, KF09, KG10, KG12, KG13, KG14, KG15, KG17, KG19, KG20 }  \
 }
 
-#define KEYMAP_IS_SCANCODE(n) ((n) >= 0x04 && (n) <= 0xA4)
+#define KEYMAP_IS_SCANCODE(n) (((n) >= 0x04 && (n) <= 0xA4) || ((n) >= 0xE0 && (n) <= 0xE7))
 #define KEYMAP_IS_CONSUMER(n) ((n) >= 0xA5 && (n) <= 0xBF)
 #define KEYMAP_IS_USER(n)     ((n) >= 0xC0 && (n) <= 0xDF)
-#define KEYMAP_IS_MODIFIER(n) ((n) >= 0xE0 && (n) <= 0xE7)
 #define KEYMAP_IS_FIRMWARE(n) ((n) >= 0xE8 && (n) <= 0xEF)
 #define KEYMAP_IS_LAYER(n)    ((n) >= 0xF0)
 
