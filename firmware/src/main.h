@@ -1,7 +1,7 @@
 #pragma once
 
 #include "defs.h"
-#include "animation.h"
+#include "animation/animation.h"
 #include "fonts/fonts.h"
 #include "keyboard/keyboard.h"
 #include "led/led.h"

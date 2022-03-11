@@ -1,29 +1,7 @@
-#include "animation.h"
+#include "shared_animation.h"
 
-enum AnimationState_t {
-	AnimationState_None,
-	AnimationState_Startup,
-	AnimationState_KeyboardInfo,
-	AnimationState_Debug,
-};
-
-enum AnimationResult_t {
-	AnimationResult_Continue,
-	AnimationResult_Finished
-};
-
-local enum AnimationState_t _animationState;
-local u32 _animationLastFrameTime;
-local u16 _animationFrame;
-
-void animation_init() {
-	_animationState = AnimationState_Startup;
-	_animationFrame = 0;
-	_animationLastFrameTime = timer_get_ms();
-}
-
-local enum AnimationResult_t _animation_startup() {
-	switch (_animationFrame++) {
+enum AnimationResult_t animation_shared_startup(u16 frame) {
+	switch (frame) {
 		case 0:
 			OLED_clear();
 			OLED_draw_pixel(64, 16, true);
@@ -101,7 +79,7 @@ local enum AnimationResult_t _animation_startup() {
 	}
 }
 
-local enum AnimationResult_t _animation_debug() {
+enum AnimationResult_t animation_shared_debug(u16 frame) {
 	LED_clear();
 	OLED_clear();
 
@@ -114,7 +92,7 @@ local enum AnimationResult_t _animation_debug() {
 		u8 rowState = keyscanner_get_state(column);
 		for (u8 row = 0; row < ROW_COUNT; ++row) {
 			if (rowState & _BV(row)) {
-				LED_set(LED_matrix_to_index(row, column), 10, 10, 10);
+				LED_set(LED_matrix_to_index(row, column), 0x0a0a0a);
 				OLED_draw_pixel(2 + column*3, 2 + row*3, true);
 				OLED_draw_pixel(3 + column*3, 2 + row*3, true);
 				OLED_draw_pixel(2 + column*3, 3 + row*3, true);
@@ -132,60 +110,6 @@ local enum AnimationResult_t _animation_debug() {
 
 	LED_update();
 	OLED_flip();
+
 	return AnimationResult_Continue;
-}
-
-local void _draw_status_indicator(i16 x0, i16 y0, i16 x1, i16 y1, const char *text, bool status) {
-	if (status) {
-		OLED_draw_filled_rectangle(x0, y0, x1, y1, true);
-		OLED_draw_text(x0+4, y0, text, font_regular, font_offset_regular, false);
-	} else {
-		OLED_draw_text(x0+4, y0, text, font_regular, font_offset_regular, true);
-	}
-}
-
-local enum AnimationResult_t _animation_keyboard_info() {
-	// TODO: Indicator for boot keyboard mode
-	OLED_clear();
-
-	i16 x = 0;
-	x = OLED_draw_text(x, -3, "TYPE-K ", font_regular, font_offset_regular, true);
-	x = OLED_draw_text(x, -3, "$s?|U'|9", font_kana, font_offset_kana, true); // "インターフェース"
-	x = OLED_draw_text(x, -3, " 02", font_regular, font_offset_regular, true);
-	OLED_draw_horizontal_line(0, 127, 10, true);
-
-	USB_LedReport_t status = USB_get_led_report();
-	_draw_status_indicator(0, 11, 28, 24, "NUM", status & HID_LED_NUM_LOCK);
-	_draw_status_indicator(47, 11, 81, 24, "CAPS", status & HID_LED_CAPS_LOCK);
-	_draw_status_indicator(99, 11, 127, 24, "SCR", status & HID_LED_SCROLL_LOCK);
-
-	OLED_flip();
-	return AnimationResult_Continue;
-}
-
-void animation_tick() {
-	enum AnimationResult_t result;
-
-	switch (_animationState) {
-		case AnimationState_Startup: {
-			u32 t = timer_get_ms();
-			if (t - _animationLastFrameTime > ANIMATION_MS_PER_FRAME) {
-				_animationLastFrameTime = t;
-				result = _animation_startup();
-				if (result == AnimationResult_Finished) {
-					_animationState = AnimationState_KeyboardInfo;
-					_animationFrame = 0;
-				}
-			}
-			break;
-		}
-
-		case AnimationState_KeyboardInfo:
-			result = _animation_keyboard_info();
-			break;
-
-		case AnimationState_Debug:
-			result = _animation_debug();
-			break;
-	}
 }
