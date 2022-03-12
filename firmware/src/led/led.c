@@ -40,7 +40,7 @@ void LED_clear() {
 	memset(_led_buffer, 0, sizeof(_led_buffer));
 }
 
-local void _LED_set_colors(u8 *data, size_t length) {
+local void _LED_send(u8 *data, size_t length) {
 	DISABLE_GLOBAL_INTERRUPTS();
 	u8 hi = PORTD | _BV(4);
 	u8 lo = PORTD & ~_BV(4);
@@ -83,22 +83,22 @@ local void _LED_set_colors(u8 *data, size_t length) {
 	_delay_us(280);
 }
 
-void LED_set(u8 n, u32 rgb) {
-	_led_buffer[3*n+0] = (rgb>>8) & 0xFF;
-	_led_buffer[3*n+1] = (rgb>>16) & 0xFF;
-	_led_buffer[3*n+2] = (rgb>>0) & 0xFF;
+void LED_set_rgb(u8 n, color_rgb_t color) {
+	_led_buffer[3*n+0] = color.g;
+	_led_buffer[3*n+1] = color.r;
+	_led_buffer[3*n+2] = color.b;
 }
 
-void LED_set_parametric(u32 (*fn)(u8, u8)) {
-	for (u8 n = 0; n < LED_COUNT; ++n) {
-		u16 coords = pgm_read_word(&_ledCoordinates[n]);
-		u32 rgb = fn(coords >> 8 & 0xFF, coords & 0xFF);
-		LED_set(n, rgb);
-	}
+void LED_set_hsv(u8 n, color_hsv_t color) {
+	LED_set_rgb(n, color_hsv_to_rgb(color));
+}
+
+u16 LED_get_coordinates_xy(u8 n) {
+	return pgm_read_word(&_ledCoordinates[n]);
 }
 
 void LED_update() {
-	_LED_set_colors(_led_buffer, sizeof(_led_buffer));
+	_LED_send(_led_buffer, sizeof(_led_buffer));
 }
 
 u8 LED_matrix_to_index(u8 row, u8 column) {

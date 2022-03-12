@@ -1,74 +1,71 @@
 #include "animation.h"
 
-local AnimationState_t _state;
+local AnimationState_OLED_t _oledState;
+local AnimationState_LED_t _ledState;
 local u32 _lastFrameTime;
 
 void animation_init() {
-	_state = (AnimationState_t){
-		.type = AnimationType_Shared,
-		.data = { .shared = { .animation = Animation_Shared_Startup }}
-	};
+	_oledState = (AnimationState_OLED_t){ .animation = Animation_OLED_Startup };
+	_ledState = (AnimationState_LED_t){ .animation = Animation_LED_Startup };
 	_lastFrameTime = timer_get_ms();
 }
 
-local void _shared_frame() {
+local void _oled_frame() {
 	enum AnimationResult_t result;
 
-	switch (_state.data.shared.animation) {
-		case Animation_Shared_Startup:
-			result = animation_shared_startup(_state.data.shared.frame++);
+	switch (_oledState.animation) {
+		case Animation_OLED_Startup:
+			result = animation_oled_startup(_oledState.frame);
 			break;
-		case Animation_Shared_Debug:
-			result = animation_shared_debug(_state.data.shared.frame++);
+		case Animation_OLED_KeyboardInfo:
+			result = animation_oled_keyboard_info(_oledState.frame);
+			break;
+		case Animation_OLED_Debug:
+			result = animation_oled_debug(_oledState.frame);
 			break;
 	}
 
+	++_oledState.frame;
+
 	if (result == AnimationResult_Finished) {
-		switch (_state.data.shared.animation) {
-			case Animation_Shared_Startup:
-				_state = (AnimationState_t){
-					.type = AnimationType_Split,
-					.data = { .split = {
-						.oled = { .animation = Animation_OLED_KeyboardInfo },
-						.led = { .animation = Animation_LED_Race }
-					}}
-				};
+		switch (_oledState.animation) {
+			case Animation_OLED_Startup:
+				_oledState = (AnimationState_OLED_t){ .animation = Animation_OLED_KeyboardInfo };
 				break;
 			default:
-				_state.data.shared.frame = 0;
+				_oledState.frame = 0;
 				break;
 		}
 	}
 }
 
-local void _split_frame() {
-	enum AnimationResult_t oledResult;
-	enum AnimationResult_t ledResult;
+local void _led_frame() {
+	enum AnimationResult_t result;
 
-	switch (_state.data.split.oled.animation) {
-		case Animation_OLED_KeyboardInfo:
-			oledResult = animation_oled_keyboard_info(_state.data.split.oled.frame++);
+	switch (_ledState.animation) {
+		case Animation_LED_Startup:
+			result = animation_led_startup(_ledState.frame);
 			break;
-	}
-
-	switch (_state.data.split.led.animation) {
 		case Animation_LED_Race:
-			ledResult = animation_led_race(_state.data.split.led.frame++);
+			result = animation_led_race(_ledState.frame);
+			break;
+		case Animation_LED_Gradient:
+			result = animation_led_gradient(_ledState.frame);
+			break;
+		case Animation_LED_Debug:
+			result = animation_led_debug(_ledState.frame);
 			break;
 	}
 
-	if (oledResult == AnimationResult_Finished) {
-		switch (_state.data.split.oled.animation) {
-			default:
-				_state.data.split.oled.frame = 0;
-				break;
-		}
-	}
+	++_ledState.frame;
 
-	if (ledResult == AnimationResult_Finished) {
-		switch (_state.data.split.led.animation) {
+	if (result == AnimationResult_Finished) {
+		switch (_ledState.animation) {
+			case Animation_LED_Startup:
+				_ledState = (AnimationState_LED_t){ .animation = Animation_LED_Gradient };
+				break;
 			default:
-				_state.data.split.led.frame = 0;
+				_ledState.frame = 0;
 				break;
 		}
 	}
@@ -78,10 +75,7 @@ void animation_tick() {
 	u32 t = timer_get_ms();
 	if (t - _lastFrameTime > ANIMATION_MS_PER_FRAME) {
 		_lastFrameTime = t;
-		if (_state.type == AnimationType_Shared) {
-			_shared_frame();
-		} else {
-			_split_frame();
-		}
+		_oled_frame();
+		_led_frame();
 	}
 }
