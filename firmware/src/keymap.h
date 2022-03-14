@@ -1,6 +1,7 @@
 #pragma once
 
 #include "defs.h"
+#include "usb/usb_reports.h"
 #include "usb/usb_spec.h"
 
 typedef struct {
@@ -15,7 +16,7 @@ typedef struct {
 
 extern const PROGMEM Keymap_t keymap;
 
-void keymap_user_macro(u8 index, bool held);
+void keymap_user_macro(u8 index, bool held, USB_NkroKeyboardReport_t *keyboardReport, u16 *systemCode, u16 *consumerCode);
 
 #define KEYMAP_LAYER( \
 	KA00, KA01, KA02, KA03, KA04, KA05, KA06, KA07, KA08, KA09, KA10, KA11, KA12,   KA13, KA14, KA15, KA16,      KA18,       KA20,    \
@@ -156,101 +157,18 @@ void keymap_user_macro(u8 index, bool held);
 #define KC_F22                  HID_KEYBOARD_F22
 #define KC_F23                  HID_KEYBOARD_F23
 #define KC_F24                  HID_KEYBOARD_F24
-#define KC_EXECUTE              HID_KEYBOARD_EXECUTE
-#define KC_HELP                 HID_KEYBOARD_HELP
-#define KC_MENU                 HID_KEYBOARD_MENU
-#define KC_SELECT               HID_KEYBOARD_SELECT
-#define KC_STOP                 HID_KEYBOARD_STOP
-#define KC_AGAIN                HID_KEYBOARD_AGAIN
-#define KC_UNDO                 HID_KEYBOARD_UNDO
-#define KC_CUT                  HID_KEYBOARD_CUT
-#define KC_COPY                 HID_KEYBOARD_COPY
-#define KC_PASTE                HID_KEYBOARD_PASTE
-#define KC_FIND                 HID_KEYBOARD_FIND
-#define KC_MUTE                 HID_KEYBOARD_MUTE
-#define KC_VOLUP                HID_KEYBOARD_VOLUME_UP
-#define KC_VOLDN                HID_KEYBOARD_VOLUME_DOWN
-#define KC_LOCKING_CAPS         HID_KEYBOARD_LOCKING_CAPS_LOCK
-#define KC_LOCKING_NUM          HID_KEYBOARD_LOCKING_NUM_LOCK
-#define KC_LOCKING_SCROLL       HID_KEYBOARD_LOCKING_SCROLL_LOCK
 #define KC_KP_COMMA             HID_KEYPAD_COMMA
-#define KC_KP_EQUAL_AS400       HID_KEYPAD_EQUAL_AS400
 #define KC_INTL1                HID_KEYBOARD_INTERNATIONAL1
 #define KC_INTL2                HID_KEYBOARD_INTERNATIONAL2
 #define KC_INTL3                HID_KEYBOARD_INTERNATIONAL3
 #define KC_INTL4                HID_KEYBOARD_INTERNATIONAL4
 #define KC_INTL5                HID_KEYBOARD_INTERNATIONAL5
 #define KC_INTL6                HID_KEYBOARD_INTERNATIONAL6
-#define KC_INTL7                HID_KEYBOARD_INTERNATIONAL7
-#define KC_INTL8                HID_KEYBOARD_INTERNATIONAL8
-#define KC_INTL9                HID_KEYBOARD_INTERNATIONAL9
 #define KC_LANG1                HID_KEYBOARD_LANG1
 #define KC_LANG2                HID_KEYBOARD_LANG2
 #define KC_LANG3                HID_KEYBOARD_LANG3
 #define KC_LANG4                HID_KEYBOARD_LANG4
 #define KC_LANG5                HID_KEYBOARD_LANG5
-#define KC_LANG6                HID_KEYBOARD_LANG6
-#define KC_LANG7                HID_KEYBOARD_LANG7
-#define KC_LANG8                HID_KEYBOARD_LANG8
-#define KC_LANG9                HID_KEYBOARD_LANG9
-#define KC_ALT_ERASE            HID_KEYBOARD_ALTERNATE_ERASE
-#define KC_SYSRQ                HID_KEYBOARD_SYSREQ_ATTENTION
-#define KC_CANCEL               HID_KEYBOARD_CANCEL
-#define KC_CLEAR                HID_KEYBOARD_CLEAR
-#define KC_PRIOR                HID_KEYBOARD_PRIOR
-#define KC_RETURN               HID_KEYBOARD_RETURN
-#define KC_SEPARATOR            HID_KEYBOARD_SEPARATOR
-#define KC_OUT                  HID_KEYBOARD_OUT
-#define KC_OPER                 HID_KEYBOARD_OPER
-#define KC_CLEAR_AGAIN          HID_KEYBOARD_CLEAR_AGAIN
-#define KC_CRSEL                HID_KEYBOARD_CRSEL_PROPS
-#define KC_EXSEL                HID_KEYBOARD_EXSEL
-#define KC_KP_00                HID_KEYPAD_00
-#define KC_KP_000               HID_KEYPAD_000
-#define KC_KP_THOUSANDS_SEP     HID_KEYPAD_THOUSANDS_SEPARATOR
-#define KC_KP_DECIMAL_SEP       HID_KEYPAD_DECIMAL_SEPARATOR
-#define KC_KP_CURRENCY_UNIT     HID_KEYPAD_CURRENCY_UNIT
-#define KC_KP_CURRENCY_SUB_UNIT HID_KEYPAD_CURRENCY_SUB_UNIT
-#define KC_KP_LPAREN            HID_KEYPAD_LPAREN
-#define KC_KP_RPAREN            HID_KEYPAD_RPAREN
-#define KC_KP_LBRACE            HID_KEYPAD_LBRACE
-#define KC_KP_RBRACE            HID_KEYPAD_RBRACE
-#define KC_KP_TAB               HID_KEYPAD_TAB
-#define KC_KP_BSPACE            HID_KEYPAD_BACKSPACE
-#define KC_KP_A                 HID_KEYPAD_A
-#define KC_KP_B                 HID_KEYPAD_B
-#define KC_KP_C                 HID_KEYPAD_C
-#define KC_KP_D                 HID_KEYPAD_D
-#define KC_KP_E                 HID_KEYPAD_E
-#define KC_KP_F                 HID_KEYPAD_F
-#define KC_KP_XOR               HID_KEYPAD_XOR
-#define KC_KP_CARET             HID_KEYPAD_CARET
-#define KC_KP_PERCENT           HID_KEYPAD_PERCENT
-#define KC_KP_LANGLE            HID_KEYPAD_LANGLE
-#define KC_KP_RANGLE            HID_KEYPAD_RANGLE
-#define KC_KP_BITAND            HID_KEYPAD_AMPERSAND
-#define KC_KP_LOGAND            HID_KEYPAD_DOUBLE_AMPERSAND
-#define KC_KP_BITOR             HID_KEYPAD_PIPE
-#define KC_KP_LOGOR             HID_KEYPAD_DOUBLE_PIPE
-#define KC_KP_COLON             HID_KEYPAD_COLON
-#define KC_KP_HASH              HID_KEYPAD_HASH
-#define KC_KP_SPACE             HID_KEYPAD_SPACE
-#define KC_KP_AT                HID_KEYPAD_AT
-#define KC_KP_BANG              HID_KEYPAD_BANG
-#define KC_KP_MEM_STORE         HID_KEYPAD_MEMORY_STORE
-#define KC_KP_MEM_RECALL        HID_KEYPAD_MEMORY_RECALL
-#define KC_KP_MEM_CLEAR         HID_KEYPAD_MEMORY_CLEAR
-#define KC_KP_MEM_ADD           HID_KEYPAD_MEMORY_ADD
-#define KC_KP_MEM_SUB           HID_KEYPAD_MEMORY_SUBTRACT
-#define KC_KP_MEM_MUL           HID_KEYPAD_MEMORY_MULTIPLY
-#define KC_KP_MEM_DIV           HID_KEYPAD_MEMORY_DIVIDE
-#define KC_KP_PLUS_MINUS        HID_KEYPAD_PLUS_MINUS
-#define KC_KP_CLEAR             HID_KEYPAD_CLEAR
-#define KC_KP_CLEAR_ENTRY       HID_KEYPAD_CLEAR_ENTRY
-#define KC_KP_BIN               HID_KEYPAD_BINARY
-#define KC_KP_OCT               HID_KEYPAD_OCTAL
-#define KC_KP_DEC               HID_KEYPAD_DECIMAL
-#define KC_KP_HEX               HID_KEYPAD_HEXADECIMAL
 #define KC_LCTRL                HID_KEYBOARD_LCONTROL
 #define KC_LSHIFT               HID_KEYBOARD_LSHIFT
 #define KC_LALT                 HID_KEYBOARD_LALT
@@ -259,6 +177,9 @@ void keymap_user_macro(u8 index, bool held);
 #define KC_RSHIFT               HID_KEYBOARD_RSHIFT
 #define KC_RALT                 HID_KEYBOARD_RALT
 #define KC_RGUI                 HID_KEYBOARD_RGUI
+#define KC_RESERVED_E9          0xE9
+#define KC_RESERVED_EA_SLEEP    0xEA
+#define KC_RESERVED_EB          0xEB
 
 // System control page
 

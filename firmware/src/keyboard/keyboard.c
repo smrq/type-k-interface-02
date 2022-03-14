@@ -14,7 +14,7 @@ local void _handle_press(USB_NkroKeyboardReport_t *keyboardReport, u16 *systemCo
 	}
 
 	else if (KEYMAP_IS_USER(code)) {
-		keymap_user_macro(keymap_code_to_user(code), held);
+		keymap_user_macro(keymap_code_to_user(code), held, keyboardReport, systemCode, consumerCode);
 	}
 
 	else if (KEYMAP_IS_FIRMWARE(code)) {
