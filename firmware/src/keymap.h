@@ -295,6 +295,10 @@ inline u16 keymap_code_to_system(u8 code) {
 #define KC_CALCULATOR         0xBD
 #define KC_MY_COMPUTER        0xBE
 
+#define KC_PLAY KC_MEDIA_PLAY_PAUSE
+#define KC_PREV KC_MEDIA_PREV_TRACK
+#define KC_NEXT KC_MEDIA_NEXT_TRACK
+
 inline u16 keymap_code_to_consumer(u8 code) {
 	switch (code) {
 		case KC_BRIGHTNESS_INC    : return HID_CONSUMER_BRIGHTNESS_INCREMENT;
@@ -319,41 +323,10 @@ inline u16 keymap_code_to_consumer(u8 code) {
 // User macros
 
 #define KEYMAP_IS_USER(n)     ((n) >= 0xC0 && (n) <= 0xDF)
-#define KC_USER0              0xC0
-#define KC_USER1              0xC1
-#define KC_USER2              0xC2
-#define KC_USER3              0xC3
-#define KC_USER4              0xC4
-#define KC_USER5              0xC5
-#define KC_USER6              0xC6
-#define KC_USER7              0xC7
-#define KC_USER8              0xC8
-#define KC_USER9              0xC9
-#define KC_USER10             0xCA
-#define KC_USER11             0xCB
-#define KC_USER12             0xCC
-#define KC_USER13             0xCD
-#define KC_USER14             0xCE
-#define KC_USER15             0xCF
-#define KC_USER16             0xD0
-#define KC_USER17             0xD1
-#define KC_USER18             0xD2
-#define KC_USER19             0xD3
-#define KC_USER20             0xD4
-#define KC_USER21             0xD5
-#define KC_USER22             0xD6
-#define KC_USER23             0xD7
-#define KC_USER24             0xD8
-#define KC_USER25             0xD9
-#define KC_USER26             0xDA
-#define KC_USER27             0xDB
-#define KC_USER28             0xDC
-#define KC_USER29             0xDD
-#define KC_USER30             0xDE
-#define KC_USER31             0xDF
+#define KC_USER(n)            (0xC0 | n)
 
 inline u8 keymap_code_to_user(u8 code) {
-	return code & 0x0F;
+	return code & 0x1F;
 }
 
 // Firmware functions

@@ -59,25 +59,24 @@ void USB_update() {
 		USB_select_endpoint(USB_ENDPOINT_KEYBOARD_IN);
 		USB_transfer_data(report, reportSize, false, USB_ENDPOINT_KEYBOARD_SIZE);
 	}
-}
 
-local void _send_other(u8 reportId, u16 code) {
-	if (USB_DEVICE_STATE != USB_DeviceState_Configured) {
-		return;
+	if (USB_is_system_report_dirty() || _is_idle_timed_out()) {
+		USB_OtherReport_t report;
+		USB_get_system_report(&report);
+
+		USB_idle_timeout_remaining = USB_idle_timeout_duration;
+
+		USB_select_endpoint(USB_ENDPOINT_OTHER_IN);
+		USB_transfer_data(&report, sizeof(report), false, USB_ENDPOINT_OTHER_SIZE);
 	}
 
-	USB_OtherReport_t report = {
-		.reportId = reportId,
-		.code = code
-	};
-	USB_select_endpoint(USB_ENDPOINT_OTHER_IN);
-	USB_transfer_data(&report, sizeof(report), false, USB_ENDPOINT_OTHER_SIZE);
-}
+	if (USB_is_consumer_report_dirty() || _is_idle_timed_out()) {
+		USB_OtherReport_t report;
+		USB_get_consumer_report(&report);
 
-void USB_send_system(u16 code) {
-	_send_other(USB_REPORT_ID_SYSTEM, code);
-}
+		USB_idle_timeout_remaining = USB_idle_timeout_duration;
 
-void USB_send_consumer(u16 code) {
-	_send_other(USB_REPORT_ID_CONSUMER, code);
+		USB_select_endpoint(USB_ENDPOINT_OTHER_IN);
+		USB_transfer_data(&report, sizeof(report), false, USB_ENDPOINT_OTHER_SIZE);
+	}
 }

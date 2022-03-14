@@ -41,6 +41,10 @@ void keyscanner_update() {
 			"  nop\n\t"
 			"  nop\n\t"
 			"  nop\n\t"
+			"  nop\n\t"
+			"  nop\n\t"
+			"  nop\n\t"
+			"  nop\n\t"
 		);
 
 		// Row pins (MSB to LSB): F7 F6 F5 F4 B2 B3 B1 D3
