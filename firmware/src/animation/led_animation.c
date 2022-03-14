@@ -39,7 +39,7 @@ enum AnimationResult_t animation_led_startup(u16 frame) {
 			if (dd2 > d2_outer || dd2 < d2_inner) {
 				LED_set_rgb(n, (color_rgb_t){ 0, 0, 0 });
 			} else {
-				color_hsv_t hsv = { 145, 235, 150 };
+				color_hsv_t hsv = { 145, 235, 255 };
 				if (dd2 > d2_peak) {
 					hsv.v = (u32)hsv.v * (d2_outer - dd2) / (d2_outer - d2_peak);
 				} else {

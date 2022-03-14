@@ -62,7 +62,12 @@ void setup() {
 	PORTF = _BV(0) | _BV(1) | _BV(4) | _BV(5) | _BV(6) | _BV(7);
 	DDRF = 0;
 
-	timer_init();
+	// 13.8.1 Timer/Counter Control Register A – TCCR0A
+	TCCR0A = _BV(WGM01);            // CTC mode
+	TCCR0B = _BV(CS00) | _BV(CS01); // 1/64 clock prescaler (250kHz)
+	OCR0A = 250;                    // 250 ticks per interrupt (1kHz = 1ms)
+	TIMSK0 = _BV(OCIE0A);           // Enable interrupt
+
 	LED_init();
 	TWI_init();
 	OLED_init();
@@ -72,20 +77,18 @@ void setup() {
 	ENABLE_GLOBAL_INTERRUPTS();
 }
 
-u32 loopcount;
-
-void loop() {
-	keyboard_update();
-	USB_update();
-	animation_tick();
-}
-
 int main() {
 	setup();
 
 	while(1) {
-		loop();
+		animation_tick();
 	}
 
 	__builtin_unreachable();
+}
+
+ISR(TIMER0_COMPA_vect, ISR_NOBLOCK) {
+	++timer_ms;
+	keyboard_update();
+	USB_update();
 }

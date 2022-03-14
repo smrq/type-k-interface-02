@@ -7,7 +7,7 @@ local u32 _lastFrameTime;
 void animation_init() {
 	_oledState = (AnimationState_OLED_t){ .animation = Animation_OLED_Startup };
 	_ledState = (AnimationState_LED_t){ .animation = Animation_LED_Startup };
-	_lastFrameTime = timer_get_ms();
+	_lastFrameTime = timer_ms;
 }
 
 local void _oled_frame() {
@@ -72,7 +72,7 @@ local void _led_frame() {
 }
 
 void animation_tick() {
-	u32 t = timer_get_ms();
+	u32 t = timer_ms;
 	if (t - _lastFrameTime > ANIMATION_MS_PER_FRAME) {
 		_lastFrameTime = t;
 		_oled_frame();
