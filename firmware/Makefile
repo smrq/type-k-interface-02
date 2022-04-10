@@ -35,11 +35,6 @@ all: $(BINDIR)/$(TARGET).hex
 $(SRCDIR)/font/font.c: $(SRCDIR)/font/generate.js
 	cd $(SRCDIR)/font && yarn && yarn start
 
-# $(OBJDIR)/%.o: $(SRCDIR)/%.c
-# 	$(call MKDIRP,$(@D))
-# 	$(RUN) avr-gcc $(CFLAGS) $(OPTFLAGS) $(EXTOPTFLAGS) $(ARCHFLAGS) -c $< -o $@
-
-# $(BINDIR)/$(TARGET).elf: $(OBJS)
 $(BINDIR)/$(TARGET).elf: $(SRCS)
 	$(call MKDIRP,$(@D))
 	$(RUN) avr-gcc $(OPTFLAGS) $(EXTOPTFLAGS) $(ARCHFLAGS) $^ -o $@

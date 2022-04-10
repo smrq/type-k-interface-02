@@ -32,7 +32,7 @@ void keyscanner_update() {
 		PORTD = (PORTD & ~(_BV(7))) | (((column >> 3) & 1) << 7);
 
 		// Wait for signal to propagate
-		_delay_us(1);
+		_delay_us(2);
 
 		// Row pins (MSB to LSB): F7 F6 F5 F4 B2 B3 B1 D3
 		u8 rows = ~(
