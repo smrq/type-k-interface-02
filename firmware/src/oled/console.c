@@ -1,6 +1,6 @@
 #include "console.h"
 
-local i16 _cursorX;
+local i16 _cursorX = 0;
 local bool _newline = false;
 
 void console_write(const char *text) {

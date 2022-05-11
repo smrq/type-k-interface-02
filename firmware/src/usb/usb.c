@@ -45,38 +45,45 @@ bool _is_idle_timed_out() {
 }
 
 void USB_update() {
-	if (USB_DEVICE_STATE != USB_DeviceState_Configured) {
-		return;
-	}
+	switch (USB_DEVICE_STATE) {
+		case USB_DeviceState_Configured:
+			if (USB_is_keyboard_report_dirty() || _is_idle_timed_out()) {
+				void *report;
+				u16 reportSize;
+				USB_get_keyboard_report(&report, &reportSize);
 
-	if (USB_is_keyboard_report_dirty() || _is_idle_timed_out()) {
-		void *report;
-		u16 reportSize;
-		USB_get_keyboard_report(&report, &reportSize);
+				USB_idle_timeout_remaining = USB_idle_timeout_duration;
 
-		USB_idle_timeout_remaining = USB_idle_timeout_duration;
+				USB_select_endpoint(USB_ENDPOINT_KEYBOARD_IN);
+				USB_transfer_data(report, reportSize, false, USB_ENDPOINT_KEYBOARD_SIZE);
+			}
 
-		USB_select_endpoint(USB_ENDPOINT_KEYBOARD_IN);
-		USB_transfer_data(report, reportSize, false, USB_ENDPOINT_KEYBOARD_SIZE);
-	}
+			if (USB_is_system_report_dirty() || _is_idle_timed_out()) {
+				USB_OtherReport_t report;
+				USB_get_system_report(&report);
 
-	if (USB_is_system_report_dirty() || _is_idle_timed_out()) {
-		USB_OtherReport_t report;
-		USB_get_system_report(&report);
+				USB_idle_timeout_remaining = USB_idle_timeout_duration;
 
-		USB_idle_timeout_remaining = USB_idle_timeout_duration;
+				USB_select_endpoint(USB_ENDPOINT_OTHER_IN);
+				USB_transfer_data(&report, sizeof(report), false, USB_ENDPOINT_OTHER_SIZE);
+			}
 
-		USB_select_endpoint(USB_ENDPOINT_OTHER_IN);
-		USB_transfer_data(&report, sizeof(report), false, USB_ENDPOINT_OTHER_SIZE);
-	}
+			if (USB_is_consumer_report_dirty() || _is_idle_timed_out()) {
+				USB_OtherReport_t report;
+				USB_get_consumer_report(&report);
 
-	if (USB_is_consumer_report_dirty() || _is_idle_timed_out()) {
-		USB_OtherReport_t report;
-		USB_get_consumer_report(&report);
+				USB_idle_timeout_remaining = USB_idle_timeout_duration;
 
-		USB_idle_timeout_remaining = USB_idle_timeout_duration;
+				USB_select_endpoint(USB_ENDPOINT_OTHER_IN);
+				USB_transfer_data(&report, sizeof(report), false, USB_ENDPOINT_OTHER_SIZE);
+			}
 
-		USB_select_endpoint(USB_ENDPOINT_OTHER_IN);
-		USB_transfer_data(&report, sizeof(report), false, USB_ENDPOINT_OTHER_SIZE);
+			break;
+
+		case USB_DeviceState_Suspended:
+			if (USB_remote_wakeup_enabled && USB_is_keyboard_report_dirty()) {
+				USB_send_remote_wakeup();
+			}
+			break;
 	}
 }

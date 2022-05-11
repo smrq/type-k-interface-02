@@ -20,11 +20,10 @@ else
 	RMRF = rm -rf $1
 endif
 
-DOCKER_IMG := lpodkalicki/avr-toolchain
-RUN := docker run --rm -v $(CWD)$(SRCDIR):/build/$(SRCDIR) -v $(CWD)$(OBJDIR):/build/$(OBJDIR) -v $(CWD)$(BINDIR):/build/$(BINDIR) $(DOCKER_IMG)
+DOCKER_IMG := docker.io/lpodkalicki/avr-toolchain
+RUN := podman run --rm -v $(CWD)$(SRCDIR):/build/$(SRCDIR) -v $(CWD)$(BINDIR):/build/$(BINDIR) $(DOCKER_IMG)
 
 SRCS := $(shell $(RUN) find $(SRCDIR) -type f -name '*.c')
-OBJS := $(SRCS:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 TARGET := unit_02
 
 all: $(BINDIR)/$(TARGET).hex
@@ -51,6 +50,6 @@ clean:
 	$(call RMRF,$(BINDIR))
 
 flash: $(BINDIR)/$(TARGET).hex
-	$(CWD)vendor/dfu-programmer-win-0.7.2/dfu-programmer atmega32u4 erase --force
-	$(CWD)vendor/dfu-programmer-win-0.7.2/dfu-programmer atmega32u4 flash $(BINDIR)/$(TARGET).hex
-	$(CWD)vendor/dfu-programmer-win-0.7.2/dfu-programmer atmega32u4 reset
+	dfu-programmer atmega32u4 erase
+	dfu-programmer atmega32u4 flash $(BINDIR)/$(TARGET).hex
+	dfu-programmer atmega32u4 reset

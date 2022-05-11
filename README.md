@@ -24,7 +24,7 @@ The design for the PCB was done in KiCad. The PCB is designed according to the s
 
 Prerequisites:
 
-* pyenv ([*nix](https://github.com/pyenv/pyenv) or [Windows](https://github.com/pyenv-win/pyenv-win))
+* pyenv ([\*nix](https://github.com/pyenv/pyenv) or [Windows](https://github.com/pyenv-win/pyenv-win))
 * [Poetry](https://python-poetry.org/) package manager
 
 Building:
@@ -37,7 +37,7 @@ Building:
 
 Prerequisites:
 
-* Docker
+* Podman
 * dfu-programmer
 
 Building:
@@ -47,3 +47,17 @@ Building:
 Flashing:
 
 * `make flash`
+
+### Building and flashing in WSL
+
+* Install Ubuntu >= 22.04
+* Install usbipd-win
+* `sudo apt install dfu-programmer podman`
+
+Flashing:
+
+* In Powershell
+	- `usbipd list`
+	- `usbipd wsl attach --busid=#-##`
+* In WSL
+	- `make flash`

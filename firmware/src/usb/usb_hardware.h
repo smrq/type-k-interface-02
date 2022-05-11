@@ -59,3 +59,4 @@ void USB_clear_out();
 bool USB_is_setup_ready();
 void USB_clear_setup();
 bool USB_transfer_data(const void *buffer, u16 length, bool fromProgmem, u8 endpointSize);
+void USB_send_remote_wakeup();

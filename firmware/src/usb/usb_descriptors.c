@@ -140,7 +140,7 @@ local const PROGMEM USB_CombinedConfigurationDescriptor_t _configurationDescript
 		.numInterfaces       = 2,
 		.configurationValue  = USB_CONFIGURATION_KEYBOARD,
 		.configurationString = USB_NO_STRING_DESCRIPTOR,
-		.attributes          = (USB_CONFIGURATION_ATTRIBUTES_RESERVED | USB_CONFIGURATION_ATTRIBUTES_SELF_POWERED),
+		.attributes          = (USB_CONFIGURATION_ATTRIBUTES_RESERVED | USB_CONFIGURATION_ATTRIBUTES_SELF_POWERED | USB_CONFIGURATION_ATTRIBUTES_REMOTE_WAKEUP),
 		.maxPower            = USB_MAX_POWER_mA(100) // I *definitely* promise not to use more than 100mA... per LED^H^H^H^H^H^H^H
 	},
 

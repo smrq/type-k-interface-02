@@ -176,3 +176,10 @@ bool USB_transfer_data(const void *buffer, u16 length, bool fromProgmem, u8 endp
 
 	return true;
 }
+
+void USB_send_remote_wakeup() {
+	USB_enable_pll();
+	USBCON &= ~_BV(FRZCLK);
+	UDCON |= _BV(RMWKUP);
+	while (UDCON & _BV(RMWKUP));
+}
