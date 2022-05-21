@@ -2,6 +2,8 @@
 
 120% keyboard design
 
+![IMG_20220417_221636](https://user-images.githubusercontent.com/400889/169670543-cce09626-fffe-4acb-8854-f92de8131ab7.jpg)
+
 ## PCB
 
 The design for the PCB was done in KiCad. The PCB is designed according to the specifications of manufacturing with [JLCPCB](https://jlcpcb.com/).
