@@ -62,4 +62,5 @@ Flashing:
 	- `usbipd list`
 	- `usbipd wsl attach --busid=#-##`
 * In WSL
-	- `make flash`
+	- `sudo make flash`
+		- Accessing USB devices via usbipd requires root
